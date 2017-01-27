@@ -7,6 +7,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import Client.Model.PacketPacker;
+import Client.Model.PacketOpener;
+
 public class MainController {
 
     @FXML TextField user1;
@@ -23,7 +26,6 @@ public class MainController {
 
     public void noServerConnection()
     {
-
 
         Alert alert= new Alert(AlertType.ERROR);
 
@@ -48,5 +50,21 @@ public class MainController {
 
     }
 
+    public void loginOK()
+    {
 
+    }
+
+    public void register()
+    {
+
+    }
+
+    public void badRequest()
+    {
+        Alert alert= new Alert(AlertType.ERROR);
+        alert.setTitle("Bad request");
+        alert.setContentText("Moren din er mann");
+        alert.showAndWait();
+    }
 }
