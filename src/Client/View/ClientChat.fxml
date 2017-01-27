@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.Controller.MainController">
+   <children>
+      <Pane layoutX="-4.0" prefHeight="400.0" prefWidth="608.0">
+         <children>
+            <Button fx:id="butteng" layoutX="157.0" layoutY="260.0" mnemonicParsing="false" onAction="#noServerConnection" prefHeight="25.0" prefWidth="126.0" text="Log in" />
+            <Button layoutX="313.0" layoutY="260.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="126.0" text="Register" />
+            <MenuBar prefHeight="25.0" prefWidth="600.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="About us">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <PasswordField fx:id="pass1" layoutX="247.0" layoutY="215.0" prefHeight="25.0" prefWidth="126.0" />
+            <TextField fx:id="user1" layoutX="247.0" layoutY="175.0" prefHeight="25.0" prefWidth="126.0" />
+            <Text layoutX="164.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username:" />
+            <Text layoutX="164.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password:" wrappingWidth="55.89258050918579" />
+            <Text layoutX="14.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Copyrighted to Ali " />
+            <ImageView fitHeight="123.0" fitWidth="128.0" layoutX="236.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@chat.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
