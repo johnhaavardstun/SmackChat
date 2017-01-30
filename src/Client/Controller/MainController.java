@@ -1,14 +1,16 @@
 package Client.Controller;
 
 
+import Client.Model.Client;
+import Client.Model.Packet;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import Client.Model.PacketPacker;
-import Client.Model.PacketOpener;
+
+import java.io.IOException;
 
 public class MainController {
 
@@ -18,10 +20,9 @@ public class MainController {
     @FXML Button butteng;
     @FXML Button Register;
 
+   String  superdupercode="§§§¤";
 
-    public MainController() {
-        // TODO Auto-generated constructor stub
-    }
+
 
 
     public void noServerConnection()
@@ -37,34 +38,57 @@ public class MainController {
     }
 
 
-    public void wrongUsernameOrPassword()
+    public  static void showMessageToClient(AlertType type,String title, String text)
     {
-
-
-        Alert alert= new Alert(AlertType.WARNING);
-
-        alert.setTitle("Wrong information");
-        alert.setContentText("Wrong username or password");
+        Alert alert= new Alert(type);
+        alert.setTitle(title);
+        alert.setContentText(text);
 
         alert.showAndWait();
 
     }
 
-    public void loginOK()
-    {
+    public void login()  {
+
+        try {
+            Client.startClient();
+            String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
+            Packet p= new Packet(Packet.Packetid.LOGIN,s);
+            Client.sendData(p);
+
+
+        } catch (IOException e) {
+            showMessageToClient(AlertType.ERROR,"Input exception","Please contact the administrator");
+        } catch (ClassNotFoundException e) {
+            showMessageToClient(AlertType.ERROR,"Packet class is missing","please contact the administrator");
+        }
 
     }
 
     public void register()
     {
 
+        try {
+            Client.startClient();
+            String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
+            System.out.println(s);
+            Packet p= new Packet(Packet.Packetid.LOGIN,s);
+            Client.sendData(p);
+
+
+        } catch (IOException e) {
+            showMessageToClient(AlertType.ERROR,"Input exception","Please contact the administrator");
+        } catch (ClassNotFoundException e) {
+            showMessageToClient(AlertType.ERROR,"Packet class is missing","please contact the administrator");
+        }
+
     }
 
-    public void badRequest()
+
+    public String getTextFieldData(TextField tx)
     {
-        Alert alert= new Alert(AlertType.ERROR);
-        alert.setTitle("Bad request");
-        alert.setContentText("Moren din er mann");
-        alert.showAndWait();
+        String s=tx.getText();
+        return s;
+
     }
 }
