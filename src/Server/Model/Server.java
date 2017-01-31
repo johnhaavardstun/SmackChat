@@ -10,8 +10,6 @@ import java.util.ArrayList;
 public class Server implements Runnable  {
 
 
-    ArrayList<User> user= new ArrayList<>();
-
 
 
     final String IP="127.0.0.1";

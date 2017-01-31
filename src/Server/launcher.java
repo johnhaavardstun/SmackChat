@@ -1,5 +1,6 @@
 package Server;
 
+import Server.Model.userMangement;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -30,8 +31,12 @@ public class launcher extends Application {
 
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws IOException {
+
+        userMangement s = new userMangement();
+        s.readFile();
+        s.toString();
+
         launch(args);
     }
 }
