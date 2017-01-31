@@ -21,8 +21,8 @@ public class User
 
     public User(String name, String password)
     {
-        name=this.username;
-        password=this.password;
+        this.username=name;
+        this.password=password;
 
 
     }
@@ -43,6 +43,13 @@ public class User
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+
+    public String toString()
+    {
+        String s="Username:"+username+"    password:"+password;
+        return s;
     }
 
 }

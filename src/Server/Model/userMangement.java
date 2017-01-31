@@ -1,11 +1,12 @@
 package Server.Model;
-import com.sun.org.apache.xpath.internal.SourceTree;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -14,38 +15,42 @@ import java.util.Arrays;
  */
 public class userMangement
 {
-    public static final String filn ="\\Server\\users.txt";
 
 
-    public String curLine;
-    public String usrN;
-    public String usrP;
+    public static String curLine;
+    public static  String usrN;
+    public static String usrP;
 
-    public userMangement(){}
 
-    ArrayList<User> userList = new ArrayList<>();
+   static ArrayList<User> userList = new ArrayList<>();
 
-    public void readFile() throws IOException {
-        BufferedReader rFile = new BufferedReader(new FileReader(filn));
-        int i = 0;
+    public static void readFile() throws IOException {
+
+
+        BufferedReader rFile = new BufferedReader(new FileReader("./src/Server/users.txt"));
         while((curLine = rFile.readLine()) != null)
         {
-            //shamil:eple123
+
             String[] info = curLine.split(":");
-            usrN = info[0].toString();
-            usrP = info[1].toString();
+
+
+            usrN = info[0];
+            usrP = info[1];
+
             User u = new User(usrN, usrP);
-            userList.add(i,u);
-            i++;
+            userList.add(u);
         }
+        rFile.close();
+       System.out.println(ArraytoString());
+
     }
-    @Override
-    public String toString()
+
+    public static   String  ArraytoString()
     {
         String s = "";
         for(User user : userList)
         {
-            s += user.username + " : " + user.password + "\n";
+          s+= user.toString()+'\n';
         }
         return s;
     }

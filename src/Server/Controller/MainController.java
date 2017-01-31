@@ -1,11 +1,14 @@
 package Server.Controller;
 
+import Server.Model.userMangement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +24,9 @@ public class MainController {
 
     public void initialize()
     {
+
+
+
         setItems(ali);
 
         list.setOnMouseClicked((MouseEvent event) ->{

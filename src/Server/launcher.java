@@ -33,9 +33,8 @@ public class launcher extends Application {
 
     public static void main(String[] args) throws IOException {
 
-        userMangement s = new userMangement();
-        s.readFile();
-        s.toString();
+
+        userMangement.readFile();
 
         launch(args);
     }
