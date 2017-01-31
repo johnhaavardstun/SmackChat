@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +32,8 @@ public class MainController {
         });
     }
 
-    ObservableList<String> ali= FXCollections.observableArrayList("Ali","shamil","Jøde Erik","Balle Erik");
+    ArrayList<String> haha= new ArrayList<>();
+    ObservableList<String> ali= FXCollections.observableArrayList(haha);
 
 
 
@@ -39,6 +41,8 @@ public class MainController {
 
     private void setItems(ObservableList e)
     {
+
+        haha.add("balle");
 
     list.setItems(e);
 
