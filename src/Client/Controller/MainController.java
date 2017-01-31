@@ -25,17 +25,7 @@ public class MainController {
 
 
 
-    public void noServerConnection()
-    {
 
-        Alert alert= new Alert(AlertType.ERROR);
-
-        alert.setTitle("SmackChat Could not connect to server");
-        alert.setContentText("Could Not connect to the server, please  check your internett connection or firewall settings!");
-
-        alert.showAndWait();
-
-    }
 
 
     public  static void showMessageToClient(AlertType type,String title, String text)
