@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 /**
  * Created by Ali on 31.01.2017.
  */
-public class Server  {
+public class Server implements Runnable  {
 
 
     final String IP="127.0.0.1";
@@ -22,4 +22,8 @@ public class Server  {
     }
 
 
+    @Override
+    public void run() {
+
+    }
 }
