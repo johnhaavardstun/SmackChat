@@ -40,7 +40,14 @@ public class MainController {
 
     public void login()  {
 
-        try {
+        String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
+        System.out.println(s);
+
+        Packet p= new Packet(Packet.Packetid.LOGIN,s);
+
+        System.out.println(p.getMessage() +"       "+p.getPacketid());
+
+        /* try {
             Client.startClient();
             String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
             Packet p= new Packet(Packet.Packetid.LOGIN,s);
@@ -52,7 +59,7 @@ public class MainController {
         } catch (ClassNotFoundException e) {
             showMessageToClient(AlertType.ERROR,"Packet class is missing","please contact the administrator");
         }
-
+*/
     }
 
     public void register()
@@ -62,7 +69,7 @@ public class MainController {
             Client.startClient();
             String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
             System.out.println(s);
-            Packet p= new Packet(Packet.Packetid.LOGIN,s);
+            Packet p= new Packet(Packet.Packetid.REGISTER,s);
             Client.sendData(p);
 
 
