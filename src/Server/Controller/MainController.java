@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 
 import java.util.List;
 
@@ -18,15 +19,23 @@ public class MainController {
     @FXML ListView list;
 
 
+    public void initialize()
+    {
+        setItems(ali);
+
+        list.setOnMouseClicked((MouseEvent event) ->{
+            if(event.getClickCount()==2 && (list.getSelectionModel().getSelectedItems()!=null))
+
+                System.out.println(list.getSelectionModel().getSelectedItem());
+
+        });
+    }
+
     ObservableList<String> ali= FXCollections.observableArrayList("Ali","shamil","Jøde Erik","Balle Erik");
 
 
 
-    public void loadUsers()
-    {
-        setItems(ali);
 
-    }
 
     private void setItems(ObservableList e)
     {
@@ -34,6 +43,8 @@ public class MainController {
     list.setItems(e);
 
     }
+
+
 
 
 
