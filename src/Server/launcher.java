@@ -35,6 +35,8 @@ public class launcher extends Application {
 
 
         userMangement.readFile();
+        System.out.println("Legger inn en user");
+        userMangement.addUserToFile();
 
         launch(args);
     }

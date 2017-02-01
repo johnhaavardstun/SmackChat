@@ -1,9 +1,6 @@
 package Server.Model;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,25 +12,18 @@ import java.util.Arrays;
  */
 public class userMangement
 {
-
-
     public static String curLine;
     public static  String usrN;
     public static String usrP;
 
-
-   static ArrayList<User> userList = new ArrayList<>();
+    static ArrayList<User> userList = new ArrayList<>();
 
     public static void readFile() throws IOException {
-
 
         BufferedReader rFile = new BufferedReader(new FileReader("./src/Server/users.txt"));
         while((curLine = rFile.readLine()) != null)
         {
-
             String[] info = curLine.split(":");
-
-
             usrN = info[0];
             usrP = info[1];
 
@@ -41,11 +31,11 @@ public class userMangement
             userList.add(u);
         }
         rFile.close();
-       System.out.println(ArraytoString());
 
+        System.out.println(ArraytoString());
     }
 
-    public static   String  ArraytoString()
+    public static String ArraytoString()
     {
         String s = "";
         for(User user : userList)
@@ -55,7 +45,21 @@ public class userMangement
         return s;
     }
 
+    public static void addUserToFile() throws IOException
+    {
+        BufferedWriter wFile = new BufferedWriter(new FileWriter("./src/Server/users.txt", true));
+        User newUser = new User("Habibi", "JewMan");
+        usrN = newUser.username;
+        usrP = newUser.password;
+        wFile.newLine();
+        wFile.write(usrN + ":" + usrP);
+        userList.add(newUser);
+        wFile.close();
+        System.out.println(ArraytoString());
 
+
+
+    }
 }
 
 
