@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Created by Ali on 27.01.2017.
@@ -13,6 +14,7 @@ import java.util.Arrays;
 public class userMangement
 {
     public static String curLine;
+    public static String testLine;
     public static  String usrN;
     public static String usrP;
 
@@ -45,20 +47,36 @@ public class userMangement
         return s;
     }
 
-    public static void addUserToFile() throws IOException
+    // Metode som itererer gjennom userList til å teste om brukernavn eller passord eksisterer fra før av.
+    public static boolean userExistTest(String un, String up) throws IOException
+    {
+        if(userList.isEmpty()) { return true; } // Betydning: finnes ingen brukere i filen.
+        else {
+            // Iterator som kjører gjennom alle registrerte brukere.
+           for(Iterator it = userList.iterator(); it.hasNext();) {
+
+            User u = (User) it.next();
+            if(un.equals(u.username) || up.equals(u.password)) return false;    // Returnerer false hvis bruker eksisterer
+           }
+           return true;
+        }
+
+    }
+    public static void addUserToFile(String n, String p) throws IOException
     {
         BufferedWriter wFile = new BufferedWriter(new FileWriter("./src/Server/users.txt", true));
-        User newUser = new User("Habibi", "JewMan");
-        usrN = newUser.username;
-        usrP = newUser.password;
-        wFile.newLine();
-        wFile.write(usrN + ":" + usrP);
+        if(userExistTest(n,p) == false) throw new NullPointerException();
+
+        usrN = n;
+        usrP = p;
+        User newUser = new User(n,p);
+
+        wFile.newLine();                    // Lager ny linje etter siste bruker i filen.
+        wFile.write(usrN + ":" + usrP);  // Skriver inn ny bruker ved endepunket i filen.
         userList.add(newUser);
+
         wFile.close();
         System.out.println(ArraytoString());
-
-
-
     }
 }
 
