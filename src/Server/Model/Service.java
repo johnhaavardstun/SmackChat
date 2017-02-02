@@ -39,11 +39,15 @@ public class Service extends javafx.concurrent.Service<Void> {
                     ObjectOutputStream oot = new ObjectOutputStream(s.getOutputStream());
                     ObjectInputStream oon = new ObjectInputStream(s.getInputStream());
 
-                    while ((true)){
+                    while ((true)) {
 
-                        System.out.println("Leser objekt...");
 
-                       // handleData(o);
+                        Packet read;
+                        if ((read = (Packet) oon.readObject()) != null) {
+                            System.out.println("har lest dette");
+
+                            handleData(read);
+                        }
                     }
 
                 } catch (IOException e) {
@@ -61,6 +65,7 @@ public class Service extends javafx.concurrent.Service<Void> {
 
 
         }
+
 
     public  void handleData(Packet packet)
     {

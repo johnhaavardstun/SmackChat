@@ -25,8 +25,8 @@ public class Server extends Task<Void> {
 
     @Override
     protected Void call() throws Exception {
-        try (ServerSocket sc = new ServerSocket(PORT);)
-        {
+
+            ServerSocket sc = new ServerSocket(PORT);
 
             System.out.println("Har laget server!");
 
@@ -44,7 +44,11 @@ public class Server extends Task<Void> {
 
         }
 
-    }
+        {
+
+        }
+
+
 
 
     public  void start()
