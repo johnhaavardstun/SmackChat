@@ -11,6 +11,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.net.ConnectException;
 
 public class MainController {
 
@@ -40,41 +41,57 @@ public class MainController {
 
     public void login()  {
 
-        String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
-        System.out.println(s);
+        String sd=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
+        System.out.println(sd);
 
-        Packet p= new Packet(Packet.Packetid.LOGIN,s);
+        Packet pa= new Packet(Packet.Packetid.LOGIN,sd);
 
-        System.out.println(p.getMessage() +"       "+p.getPacketid());
+        System.out.println(pa.getMessage() +"       "+pa.getPacketid());
 
-        /* try {
-            Client.startClient();
+        try {
+            Client c= new Client();
+
+            System.out.println("connecter til server");
+            c.startClient();
+
+            System.out.println("ferdig connected");
+
             String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
+            System.out.println("lag pakket");
+
             Packet p= new Packet(Packet.Packetid.LOGIN,s);
-            Client.sendData(p);
+            c.sendData(p);
 
 
         } catch (IOException e) {
-            showMessageToClient(AlertType.ERROR,"Input exception","Please contact the administrator");
+            showMessageToClient(AlertType.ERROR,"Connection Refused","Server is down please try again later!");
+            e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            showMessageToClient(AlertType.ERROR,"Packet class is missing","please contact the administrator");
+            showMessageToClient(AlertType.ERROR, "Packet class is missing", "please contact the administrator");
         }
-*/
-    }
+        }
+
+
+
+
+
 
     public void register()
     {
 
         try {
-            Client.startClient();
+            Client c= new Client();
+            c.startClient();
+
             String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
             System.out.println(s);
             Packet p= new Packet(Packet.Packetid.REGISTER,s);
-            Client.sendData(p);
+            c.sendData(p);
 
 
         } catch (IOException e) {
             showMessageToClient(AlertType.ERROR,"Input exception","Please contact the administrator");
+            e.printStackTrace();
         } catch (ClassNotFoundException e) {
             showMessageToClient(AlertType.ERROR,"Packet class is missing","please contact the administrator");
         }

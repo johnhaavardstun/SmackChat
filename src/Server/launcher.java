@@ -33,11 +33,6 @@ public class launcher extends Application {
 
     public static void main(String[] args) throws IOException {
 
-
-        userMangement.readFile();
-        System.out.println("Legger inn en user");
-        userMangement.addUserToFile("Rock", "Bastard");
-
         launch(args);
     }
 }

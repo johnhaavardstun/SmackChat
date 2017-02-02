@@ -1,5 +1,6 @@
 package Server.Controller;
 
+import Server.Model.Server;
 import Server.Model.userMangement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,7 +26,8 @@ public class MainController {
     public void initialize()
     {
 
-
+        Server serv= new Server();
+        serv.startThread();
 
         setItems(ali);
 

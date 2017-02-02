@@ -17,19 +17,22 @@ import java.net.Socket;
 public class Client {
 
     ServerSocket sc;
-     static Socket s;
+      Socket s;
 
- static   ObjectOutputStream oos;
-    static ObjectInputStream ois;
+    ObjectOutputStream oos;
+     ObjectInputStream ois;
 
-    private final static int SERVERTPORT=1234;
+    private final static int SERVERTPORT=5000;
     private final static String SERVERIP="127.0.0.1";
 
 
-    public static void  startClient() throws IOException, ClassNotFoundException {
+    public  void  startClient() throws IOException, ClassNotFoundException {
+        System.out.println("Skjer dette:");
         s= new Socket(SERVERIP,SERVERTPORT);
         oos= new ObjectOutputStream(s.getOutputStream());
         ois= new ObjectInputStream(s.getInputStream());
+        System.out.println("Skjer det over");
+
 
         while(true)
         {
@@ -43,7 +46,9 @@ public class Client {
 
     }
 
-    public  static void sendData(Packet packet) throws IOException {
+    public  void sendData(Packet packet) throws IOException {
+
+        System.out.println("data bir sendt");
 
         oos.writeObject(packet);
     }
