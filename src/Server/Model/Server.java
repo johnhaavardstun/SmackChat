@@ -16,6 +16,10 @@ public class Server extends Task<Void> {
     final int PORT=5000;
 
 
+    public Server()
+    {
+
+    }
 
 
 
@@ -43,7 +47,7 @@ public class Server extends Task<Void> {
     }
 
 
-    public  void startThread()
+    public  void start()
     {
         System.out.println("Starter tråd");
         Thread th= new Thread(this);

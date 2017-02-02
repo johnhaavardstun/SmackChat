@@ -27,7 +27,7 @@ public class MainController {
     {
 
         Server serv= new Server();
-        serv.startThread();
+        serv.start();
 
         setItems(ali);
 
