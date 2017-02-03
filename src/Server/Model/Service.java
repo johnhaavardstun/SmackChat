@@ -1,9 +1,11 @@
 package Server.Model;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import javafx.concurrent.Task;
-
+import Client.Model.Packet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.*;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
@@ -12,11 +14,12 @@ import java.net.Socket;
  */
 public class Service extends javafx.concurrent.Service<Void> {
 
-    Socket s;
+    Socket socket;
     private String clientinfo;
+    Packet packet=null;
 
     public Service(Socket s, String info) {
-        this.s = s;
+        this.socket = s;
         this.clientinfo = info;
 
     }
@@ -30,31 +33,39 @@ public class Service extends javafx.concurrent.Service<Void> {
             @Override
             protected Void call() throws Exception {
 
-                Packet o;
 
                 try {
 
                     System.out.println("Lager info");
 
-                    ObjectOutputStream oot = new ObjectOutputStream(s.getOutputStream());
-                    ObjectInputStream oon = new ObjectInputStream(s.getInputStream());
+                    ObjectOutputStream oot = new ObjectOutputStream(socket.getOutputStream());
+                    oot.flush();
+                    ObjectInputStream oon = new ObjectInputStream(socket.getInputStream());
+
+                    System.out.println("Starter loop");
 
                     while ((true)) {
 
+                        System.out.println("leser objekt");
 
-                        Packet read;
-                        if ((read = (Packet) oon.readObject()) != null) {
-                            System.out.println("har lest dette");
-
-                            handleData(read);
+                        if((packet=(Packet)oon.readObject())!=null)
+                        {
+                            System.out.println(packet.getMessage()+"   "+packet.getPacketid());
+                            handleData(packet);
                         }
+
+
+
+                        System.out.println("Har lest objekt");
+
+
                     }
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                } /*catch (ClassNotFoundException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
-                }*/
+                }
 
                 return  null;
 

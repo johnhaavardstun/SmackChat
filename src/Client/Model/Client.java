@@ -17,40 +17,45 @@ import java.net.Socket;
 public class Client {
 
     ServerSocket sc;
-      Socket s;
+      static Socket s;
 
-    ObjectOutputStream oos;
-     ObjectInputStream ois;
+    static ObjectOutputStream oos;
+     static ObjectInputStream ois;
 
-    private final static int SERVERTPORT=5000;
+    private final static int SERVERTPORT=8000;
     private final static String SERVERIP="127.0.0.1";
 
 
-    public  void  startClient() throws IOException, ClassNotFoundException {
+    public static void  startClient() throws IOException, ClassNotFoundException {
         System.out.println("Skjer dette:");
         s= new Socket(SERVERIP,SERVERTPORT);
         oos= new ObjectOutputStream(s.getOutputStream());
+        oos.flush();
+
         ois= new ObjectInputStream(s.getInputStream());
+
+
         System.out.println("Skjer det over");
 
 
-        while(true)
+
+        /* while(true)
         {
           Packet read=(Packet)ois.readObject();
             if(read!=null)
             {
              handleData(read);
             }
-        }
+        }*/
 
 
     }
 
-    public  void sendData(Packet packet) throws IOException {
+    public  static void  sendData(Packet packet) throws IOException {
 
         System.out.println("data bir sendt");
-
         oos.writeObject(packet);
+        oos.flush();
     }
 
 public static void handleData(Packet packet)

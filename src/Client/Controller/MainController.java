@@ -41,26 +41,25 @@ public class MainController {
 
     public void login()  {
 
-        String sd=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
-        System.out.println(sd);
 
-        Packet pa= new Packet(Packet.Packetid.LOGIN,sd);
-
-        System.out.println(pa.getMessage() +"       "+pa.getPacketid());
 
         try {
-            Client c= new Client();
 
             System.out.println("connecter til server");
-            c.startClient();
+            Client.startClient();
 
             System.out.println("ferdig connected");
 
-            String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
+
             System.out.println("lag pakket");
 
-            Packet p= new Packet(Packet.Packetid.LOGIN,s);
-            c.sendData(p);
+            String sd=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
+            System.out.println(sd);
+
+            Packet pa= new Packet(Packet.Packetid.LOGIN,sd);
+
+            System.out.println(pa.getMessage() +"       "+pa.getPacketid());
+            Client.sendData(pa);
 
 
         } catch (IOException e) {
@@ -76,10 +75,15 @@ public class MainController {
 
 
 
-    public void register()
-    {
+    public void register() throws IOException {
 
-        try {
+        String sd="hei";
+        Packet pa= new Packet(Packet.Packetid.LOGIN,sd);
+
+        System.out.println(pa.getMessage() +"       "+pa.getPacketid());
+        Client.sendData(pa);
+
+        /* try {
             Client c= new Client();
             c.startClient();
 
@@ -95,7 +99,7 @@ public class MainController {
         } catch (ClassNotFoundException e) {
             showMessageToClient(AlertType.ERROR,"Packet class is missing","please contact the administrator");
         }
-
+        */
     }
 
 

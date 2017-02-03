@@ -23,7 +23,6 @@ public class launcher extends Application {
 
 
         Parent root= FXMLLoader.load(serverLoad);
-        Parent shamil= FXMLLoader.load(serverLoad);
         Scene scene=new Scene(root,600,400);
         Server.setTitle("Server");
         Server.setScene(scene);

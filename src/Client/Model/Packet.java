@@ -1,13 +1,12 @@
 package Client.Model;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 
 import java.io.Serializable;
 
 /**
  * Created by Ali on 30.01.2017.
  */
-public class Packet implements Serializable {
+public class Packet implements Serializable{
 
 
     static final long serialVersionUID = 69L;

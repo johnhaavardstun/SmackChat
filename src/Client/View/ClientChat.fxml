@@ -17,7 +17,7 @@
       <Pane layoutX="-4.0" prefHeight="400.0" prefWidth="608.0">
          <children>
             <Button fx:id="butteng" layoutX="157.0" layoutY="260.0" mnemonicParsing="false" onAction="#login" prefHeight="25.0" prefWidth="126.0" text="Log in" />
-            <Button layoutX="313.0" layoutY="260.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="126.0" text="Register" />
+            <Button fx:id="Register" layoutX="313.0" layoutY="260.0" mnemonicParsing="false" onAction="#register" prefHeight="25.0" prefWidth="126.0" text="Register" />
             <MenuBar prefHeight="25.0" prefWidth="600.0">
               <menus>
                 <Menu mnemonicParsing="false" text="File">
