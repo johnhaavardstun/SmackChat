@@ -22,9 +22,15 @@ public class MainController {
     @FXML Button Register;
 
    String  superdupercode="§§§¤";
+Client c;
+
+public void initialize()
+{
+    c= new Client();
+    c.start();
 
 
-
+}
 
 
 
@@ -46,7 +52,6 @@ public class MainController {
         try {
 
             System.out.println("connecter til server");
-            Client.startClient();
 
             System.out.println("ferdig connected");
 
@@ -59,14 +64,12 @@ public class MainController {
             Packet pa= new Packet(Packet.Packetid.LOGIN,sd);
 
             System.out.println(pa.getMessage() +"       "+pa.getPacketid());
-            Client.sendData(pa);
+            c.sendData(pa);
 
 
         } catch (IOException e) {
             showMessageToClient(AlertType.ERROR,"Connection Refused","Server is down please try again later!");
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            showMessageToClient(AlertType.ERROR, "Packet class is missing", "please contact the administrator");
         }
         }
 
@@ -80,8 +83,6 @@ public class MainController {
 
 
          try {
-            Client c= new Client();
-            c.startClient();
 
             String s=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
             System.out.println(s);
@@ -92,8 +93,6 @@ public class MainController {
         } catch (IOException e) {
             showMessageToClient(AlertType.ERROR,"Input exception","Please contact the administrator");
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            showMessageToClient(AlertType.ERROR,"Packet class is missing","please contact the administrator");
         }
 
     }

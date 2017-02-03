@@ -1,8 +1,8 @@
 package Client.Model;
 
 import Client.Controller.MainController;
-import com.sun.corba.se.impl.io.InputStreamHook;
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 
 import java.io.IOException;
@@ -14,42 +14,19 @@ import java.net.Socket;
 /**
  * Created by Ali on 30.01.2017.
  */
-public class Client {
+public class Client extends Task<Void> {
 
     ServerSocket sc;
       static Socket s;
 
     static ObjectOutputStream oos;
-     static ObjectInputStream ois;
+     Packet p=null;
 
     private final static int SERVERTPORT=8000;
     private final static String SERVERIP="127.0.0.1";
 
 
-    public static void  startClient() throws IOException, ClassNotFoundException {
-        System.out.println("Skjer dette:");
-        s= new Socket(SERVERIP,SERVERTPORT);
-        oos= new ObjectOutputStream(s.getOutputStream());
-        oos.flush();
 
-        ois= new ObjectInputStream(s.getInputStream());
-
-
-        System.out.println("Skjer det over");
-
-
-
-        /* while(true)
-        {
-          Packet read=(Packet)ois.readObject();
-            if(read!=null)
-            {
-             handleData(read);
-            }
-        }*/
-
-
-    }
 
     public  static void  sendData(Packet packet) throws IOException {
 
@@ -63,19 +40,98 @@ public static void handleData(Packet packet)
 
     switch (packet.getPacketid()){
         case LOGIN:
-            MainController.showMessageToClient(Alert.AlertType.ERROR,"Bad Request","Bad request from server");
+            System.out.print("feil");
             break;
         case REGISTER:
-            MainController.showMessageToClient(Alert.AlertType.ERROR,"Bad Request","Bad request from server");
+            System.out.print("feil");
             break;
         case WRONGLOGIN:
-            MainController.showMessageToClient(Alert.AlertType.ERROR,"Wrong username or password","You have entered the wrong username or passowrd");
-
+            System.out.print("Dette er feil ifno");
         case BADREQUEST:
-            MainController.showMessageToClient(Alert.AlertType.ERROR,"Bad Request","Bad Reuest from Server");
+                System.out.print("feil");
+            break;
     }
 
 }
 
 
+    @Override
+    protected Void call() throws Exception {
+        System.out.println("Skjer dette:");
+        s = new Socket(SERVERIP, SERVERTPORT);
+        oos = new ObjectOutputStream(s.getOutputStream());
+        oos.flush();
+
+        readinfo rd= new readinfo(s);
+        rd.start();
+
+        System.out.println("Skjer det over");
+return null;
+    }
+
+
+    public void start()
+    {
+        Thread t= new Thread(this);
+        t.start();
+
+    }
+
+    private class readinfo extends Service<Void>
+    {
+        Socket socket;
+        Packet packet=null;
+        private readinfo(Socket socket)
+        {
+            this.socket=socket;
+        }
+
+        @Override
+        protected Task<Void> createTask() {
+            Task<Void> task= new Task<Void>() {
+
+
+                @Override
+                protected Void call() throws Exception {
+
+
+                    try {
+
+                       ObjectInputStream oin= new ObjectInputStream(socket.getInputStream());
+
+                        while ((true)) {
+
+                            System.out.println("leser objekt");
+
+                            if((packet=(Packet)oin.readObject())!=null)
+                            {
+                                System.out.println(packet.getMessage()+"   "+packet.getPacketid());
+                                handleData(packet);
+                            }
+
+
+
+                            System.out.println("Har lest objekt");
+
+
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return  null;
+
+                }
+
+            };
+
+
+
+            return task;
+        }
+    }
 }
+

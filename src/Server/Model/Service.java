@@ -81,8 +81,7 @@ public class Service extends javafx.concurrent.Service<Void> {
         }
 
 
-    public  void handleData(Packet packet)
-    {
+    public  void handleData(Packet packet) throws IOException {
 
         System.out.println(packet.getPacketid());
         String data=packet.getMessage();
@@ -92,6 +91,9 @@ public class Service extends javafx.concurrent.Service<Void> {
             case LOGIN:
                 if(userMangement.checkIfLoginCorrect(info[0],info[1]))
                 System.out.println("ok");
+                else{
+                    sendData( new Packet(Packet.Packetid.WRONGLOGIN,"pakke motatt"));
+                }
 
                 break;
             case REGISTER:
