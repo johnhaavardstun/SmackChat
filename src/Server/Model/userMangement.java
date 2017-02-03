@@ -48,7 +48,7 @@ public class userMangement
     }
 
     // Metode som itererer gjennom userList til å teste om brukernavn eller passord eksisterer fra før av.
-    public static boolean userExistTest(String un, String up) throws IOException
+    public static boolean userExistTest(String un) throws IOException
     {
         if(userList.isEmpty()) { return true; } // Betydning: finnes ingen brukere i filen.
         else {
@@ -56,7 +56,7 @@ public class userMangement
            for(Iterator it = userList.iterator(); it.hasNext();) {
 
             User u = (User) it.next();
-            if(un.equals(u.username) || up.equals(u.password)) return false;    // Returnerer false hvis bruker eksisterer
+            if(un.equals(u.username)) return false;    // Returnerer false hvis bruker eksisterer
            }
            return true;
         }
@@ -65,7 +65,6 @@ public class userMangement
     public static void addUserToFile(String n, String p) throws IOException
     {
         BufferedWriter wFile = new BufferedWriter(new FileWriter("./src/Server/users.txt", true));
-        if(userExistTest(n,p) == false) throw new NullPointerException();
 
         usrN = n;
         usrP = p;
@@ -78,6 +77,21 @@ public class userMangement
         wFile.close();
         System.out.println(ArraytoString());
     }
+
+    public static Boolean checkIfLoginCorrect(String username, String password)
+    {
+        for (User user : userList)
+        {
+            if(user.username.equals(username))
+            {
+                return user.passwordCheck(password);
+            }
+
+        }
+        return false;
+    }
+
+
 }
 
 

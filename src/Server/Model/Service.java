@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.nio.*;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * Created by Ali on 02.02.2017.
@@ -17,6 +18,8 @@ public class Service extends javafx.concurrent.Service<Void> {
     Socket socket;
     private String clientinfo;
     Packet packet=null;
+    ObjectOutputStream oot;
+    ObjectInputStream oon;
 
     public Service(Socket s, String info) {
         this.socket = s;
@@ -38,9 +41,9 @@ public class Service extends javafx.concurrent.Service<Void> {
 
                     System.out.println("Lager info");
 
-                    ObjectOutputStream oot = new ObjectOutputStream(socket.getOutputStream());
+                    oot = new ObjectOutputStream(socket.getOutputStream());
                     oot.flush();
-                    ObjectInputStream oon = new ObjectInputStream(socket.getInputStream());
+                    oon = new ObjectInputStream(socket.getInputStream());
 
                     System.out.println("Starter loop");
 
@@ -82,17 +85,39 @@ public class Service extends javafx.concurrent.Service<Void> {
     {
 
         System.out.println(packet.getPacketid());
+        String data=packet.getMessage();
+        String[] info=data.split("§§§¤");
+
         switch (packet.getPacketid()){
             case LOGIN:
-
-                System.out.println("bankainanana");
+                if(userMangement.checkIfLoginCorrect(info[0],info[1]))
+                System.out.println("ok");
 
                 break;
             case REGISTER:
+
+                try {
+                    if(userMangement.userExistTest(info[0]))
+                    {
+                        userMangement.addUserToFile(info[0],info[1]);
+                        System.out.println("Bruker er registret");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
 
             case BADREQUEST:
         }
 
+    }
+
+
+    public   void  sendData(Packet packet) throws IOException {
+
+        System.out.println("data bir sendt");
+        oot.writeObject(packet);
+        oot.flush();
     }
 }

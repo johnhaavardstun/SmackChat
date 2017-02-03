@@ -26,6 +26,11 @@ public class MainController {
     public void initialize()
     {
 
+        try {
+            userMangement.readFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Server serv= new Server();
         serv.start();
 

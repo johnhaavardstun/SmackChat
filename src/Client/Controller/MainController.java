@@ -77,13 +77,9 @@ public class MainController {
 
     public void register() throws IOException {
 
-        String sd="hei";
-        Packet pa= new Packet(Packet.Packetid.LOGIN,sd);
 
-        System.out.println(pa.getMessage() +"       "+pa.getPacketid());
-        Client.sendData(pa);
 
-        /* try {
+         try {
             Client c= new Client();
             c.startClient();
 
@@ -99,7 +95,7 @@ public class MainController {
         } catch (ClassNotFoundException e) {
             showMessageToClient(AlertType.ERROR,"Packet class is missing","please contact the administrator");
         }
-        */
+
     }
 
 
