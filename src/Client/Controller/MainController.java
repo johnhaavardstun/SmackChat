@@ -51,9 +51,6 @@ public void initialize()
 
         try {
 
-            System.out.println("connecter til server");
-
-            System.out.println("ferdig connected");
 
 
             System.out.println("lag pakket");

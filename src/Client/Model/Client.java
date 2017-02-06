@@ -57,7 +57,7 @@ public static void handleData(Packet packet)
 
     @Override
     protected Void call() throws Exception {
-        System.out.println("Skjer dette:");
+        System.out.println("Metode Call(): lager socket");
         s = new Socket(SERVERIP, SERVERTPORT);
         oos = new ObjectOutputStream(s.getOutputStream());
         oos.flush();
@@ -65,7 +65,7 @@ public static void handleData(Packet packet)
         readinfo rd= new readinfo(s);
         rd.start();
 
-        System.out.println("Skjer det over");
+        System.out.println("readinfo (tastatur) startet");
 return null;
     }
 
@@ -101,7 +101,7 @@ return null;
 
                         while ((true)) {
 
-                            System.out.println("leser objekt");
+                            System.out.println("leser Objekt input stream");
 
                             if((packet=(Packet)oin.readObject())!=null)
                             {
@@ -111,7 +111,7 @@ return null;
 
 
 
-                            System.out.println("Har lest objekt");
+                            System.out.println("Objektet er ferdig lest");
 
 
                         }

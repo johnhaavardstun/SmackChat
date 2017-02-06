@@ -28,15 +28,13 @@ public class Server extends Task<Void> {
 
             ServerSocket sc = new ServerSocket(PORT);
 
-            System.out.println("Har laget server!");
+            System.out.println("Har laget serverSocket!");
 
             while(true)
             {
-                System.out.println("Aksepterter start");
-
                 Socket s= sc.accept();
 
-                System.out.println("Har akseptert"+ s.getInetAddress().getHostAddress());
+                System.out.println("Har akseptert client connection"+ s.getInetAddress().getHostAddress());
 
                 Service sd= new Service(s,s.getInetAddress().getHostAddress() );
                 sd.start();

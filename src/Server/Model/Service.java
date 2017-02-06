@@ -39,17 +39,17 @@ public class Service extends javafx.concurrent.Service<Void> {
 
                 try {
 
-                    System.out.println("Lager info");
+                    System.out.println("Lager Task");
 
                     oot = new ObjectOutputStream(socket.getOutputStream());
                     oot.flush();
                     oon = new ObjectInputStream(socket.getInputStream());
 
-                    System.out.println("Starter loop");
+                    System.out.println("Starter Task loop");
 
                     while ((true)) {
 
-                        System.out.println("leser objekt");
+                        System.out.println("leser objekt/packet");
 
                         if((packet=(Packet)oon.readObject())!=null)
                         {
@@ -59,7 +59,7 @@ public class Service extends javafx.concurrent.Service<Void> {
 
 
 
-                        System.out.println("Har lest objekt");
+                        System.out.println("Har lest objekt/packet");
 
 
                     }
@@ -90,9 +90,9 @@ public class Service extends javafx.concurrent.Service<Void> {
         switch (packet.getPacketid()){
             case LOGIN:
                 if(userMangement.checkIfLoginCorrect(info[0],info[1]))
-                System.out.println("ok");
+                System.out.println("Log in: OK");
                 else{
-                    sendData( new Packet(Packet.Packetid.WRONGLOGIN,"pakke motatt"));
+                    sendData( new Packet(Packet.Packetid.WRONGLOGIN,"Pakke Mottatt"));
                 }
 
                 break;
@@ -118,7 +118,7 @@ public class Service extends javafx.concurrent.Service<Void> {
 
     public   void  sendData(Packet packet) throws IOException {
 
-        System.out.println("data bir sendt");
+        System.out.println("Data/pakke bir sendt til client");
         oot.writeObject(packet);
         oot.flush();
     }
