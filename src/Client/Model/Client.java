@@ -5,11 +5,14 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 
+import javax.rmi.CORBA.Util;
+import javax.tools.JavaCompiler;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 
 /**
  * Created by Ali on 30.01.2017.
@@ -17,48 +20,59 @@ import java.net.Socket;
 public class Client extends Task<Void> {
 
     ServerSocket sc;
-      static Socket s;
+    Socket s;
 
-    static ObjectOutputStream oos;
-     Packet p=null;
+    ObjectOutputStream oos;
+    Packet p=null;
 
-    private final static int SERVERTPORT=8000;
-    private final static String SERVERIP="127.0.0.1";
-
-
+    private final int SERVERTPORT=8000;
+    private final String SERVERIP="127.0.0.1";
 
 
-    public  static void  sendData(Packet packet) throws IOException {
 
+
+    public void  sendData(Packet packet) throws IOException {
         System.out.println("data bir sendt");
         oos.writeObject(packet);
         oos.flush();
     }
 
-public static void handleData(Packet packet)
-{
-
-    switch (packet.getPacketid()){
-        case LOGIN:
-            System.out.print("feil");
-            break;
-        case REGISTER:
-            System.out.print("feil");
-            break;
-        case WRONGLOGIN:
-            System.out.print("Dette er feil ifno");
-        case BADREQUEST:
+    public void handleData(Packet packet)
+    {
+        switch (packet.getPacketid()) {
+            case USERNAMETAKEN:
+                this.updateMessage(System.currentTimeMillis() + "@USERNAMETAKEN");
+                System.out.println("opptatt brukernavn");
+                break;
+            case LOGINOK:
+                this.updateMessage(System.currentTimeMillis() + "@LOGINOK");
+                System.out.println("Login - yay!");
+                break;
+            case REGISTEROK:
+                this.updateMessage(System.currentTimeMillis() + "@REGISTEROK");
+                System.out.println("Suksessfull registrering");
+                break;
+            case WRONGLOGIN:
+                this.updateMessage(System.currentTimeMillis() + "@WRONGLOGIN");
+                System.out.print("Dette er feil ifno");
+                break;
+            case BADREQUEST:
+                this.updateMessage(System.currentTimeMillis() + "@BADREQUEST");
                 System.out.print("feil");
-            break;
+                break;
+            default:
+                this.updateMessage(System.currentTimeMillis() + "@BADREQUEST");
+                System.out.println("ukjent pakke");
+        }
+
     }
-
-}
-
 
     @Override
     protected Void call() throws Exception {
         System.out.println("Metode Call(): lager socket");
         s = new Socket(SERVERIP, SERVERTPORT);
+        if (!s.isConnected())
+            throw new IOException("Could not connect to server!");
         oos = new ObjectOutputStream(s.getOutputStream());
         oos.flush();
 
@@ -66,7 +80,7 @@ public static void handleData(Packet packet)
         rd.start();
 
         System.out.println("readinfo (tastatur) startet");
-return null;
+        return null;
     }
 
 
@@ -74,6 +88,9 @@ return null;
     {
         Thread t= new Thread(this);
         t.start();
+        t.setUncaughtExceptionHandler((thr, e) -> {
+            this.setException(e);
+        });
 
     }
 
@@ -81,6 +98,7 @@ return null;
     {
         Socket socket;
         Packet packet=null;
+
         private readinfo(Socket socket)
         {
             this.socket=socket;
@@ -117,7 +135,8 @@ return null;
                         }
 
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        this.updateMessage("SERVERLOST");
+//                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -62,6 +62,7 @@ public class userMangement
         }
 
     }
+
     public static void addUserToFile(String n, String p) throws IOException
     {
         BufferedWriter wFile = new BufferedWriter(new FileWriter("./src/Server/users.txt", true));

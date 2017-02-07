@@ -6,3 +6,4 @@ Habibi:JewMan
 Rock:Bastard
 Erik:Jew
 John:Habibi
+Blingo:best

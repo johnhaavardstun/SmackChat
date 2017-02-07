@@ -18,7 +18,8 @@ public class Packet implements Serializable{
      WRONGLOGIN((byte)55),
      BADREQUEST((byte)90),
      LOGINOK((byte) 58),
-     REGISTEROK((byte) 40);
+     REGISTEROK((byte) 40),
+     USERNAMETAKEN((byte) 61);
 
 
 

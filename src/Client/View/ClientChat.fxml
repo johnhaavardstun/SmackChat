@@ -40,7 +40,7 @@
             <PasswordField fx:id="pass1" layoutX="247.0" layoutY="215.0" prefHeight="25.0" prefWidth="126.0" />
             <TextField fx:id="user1" layoutX="247.0" layoutY="175.0" prefHeight="25.0" prefWidth="126.0" />
             <Text layoutX="164.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username:" />
-            <Text layoutX="164.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password:" wrappingWidth="55.89258050918579" />
+            <Text layoutX="164.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password:" />
             <Text layoutX="14.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Copyrighted to Ali " />
             <ImageView fitHeight="123.0" fitWidth="128.0" layoutX="236.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
                <image>

@@ -26,30 +26,23 @@ public class Server extends Task<Void> {
     @Override
     protected Void call() throws Exception {
 
-            ServerSocket sc = new ServerSocket(PORT);
+        ServerSocket sc = new ServerSocket(PORT);
 
-            System.out.println("Har laget serverSocket!");
+        System.out.println("Har laget serverSocket!");
 
-            while(true)
-            {
-                Socket s= sc.accept();
-
-                System.out.println("Har akseptert client connection"+ s.getInetAddress().getHostAddress());
-
-                Service sd= new Service(s,s.getInetAddress().getHostAddress() );
-                sd.start();
-            }
-
-        }
-
+        while(true)
         {
+            Socket s= sc.accept();
 
+            System.out.println("Har akseptert client connection"+ s.getInetAddress().getHostAddress());
+
+            Service sd= new Service(s,s.getInetAddress().getHostAddress() );
+            sd.start();
         }
 
+    }
 
-
-
-    public  void start()
+    public void start()
     {
         System.out.println("Starter tråd");
         Thread th= new Thread(this);

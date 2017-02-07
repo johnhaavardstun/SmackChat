@@ -23,6 +23,9 @@ public class MainController {
     @FXML ListView list;
 
 
+    ArrayList<String> haha= new ArrayList<>();
+    ObservableList<String> ali= FXCollections.observableArrayList(haha);
+
     public void initialize()
     {
 
@@ -31,6 +34,7 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         Server serv= new Server();
         serv.start();
 
@@ -44,9 +48,6 @@ public class MainController {
         });
     }
 
-    ArrayList<String> haha= new ArrayList<>();
-    ObservableList<String> ali= FXCollections.observableArrayList(haha);
-
 
 
 
@@ -56,7 +57,7 @@ public class MainController {
 
         haha.add("balle");
 
-    list.setItems(e);
+        list.setItems(e);
 
     }
 

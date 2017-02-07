@@ -1,14 +1,11 @@
 package Server.Model;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import javafx.concurrent.Task;
 import Client.Model.Packet;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.nio.*;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Arrays;
 
 /**
  * Created by Ali on 02.02.2017.
@@ -37,44 +34,43 @@ public class Service extends javafx.concurrent.Service<Void> {
             protected Void call() throws Exception {
 
 
-                try {
+            try {
 
-                    System.out.println("Lager Task");
+                System.out.println("Lager Task");
 
-                    oot = new ObjectOutputStream(socket.getOutputStream());
-                    oot.flush();
-                    oon = new ObjectInputStream(socket.getInputStream());
+                oot = new ObjectOutputStream(socket.getOutputStream());
+                oot.flush();
+                oon = new ObjectInputStream(socket.getInputStream());
 
-                    System.out.println("Starter Task loop");
+                System.out.println("Starter Task loop");
 
-                    while ((true)) {
+                while ((true)) {
 
-                        System.out.println("leser objekt/packet");
+                    System.out.println("leser objekt/packet");
 
-                        if((packet=(Packet)oon.readObject())!=null)
-                        {
-                            System.out.println(packet.getMessage()+"   "+packet.getPacketid());
-                            handleData(packet);
-                        }
-
-
-
-                        System.out.println("Har lest objekt/packet");
-
-
+                    if((packet=(Packet)oon.readObject())!=null)
+                    {
+                        System.out.println(packet.getMessage()+"   "+packet.getPacketid());
+                        handleData(packet);
                     }
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println("Har lest objekt/packet");
+
                 }
 
-                return  null;
+            } catch (IOException e) {
+                System.out.println("Connection lost - bye!");
+                //e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
 
             }
 
         };
+
         return task;
 
 
@@ -90,9 +86,15 @@ public class Service extends javafx.concurrent.Service<Void> {
         switch (packet.getPacketid()){
             case LOGIN:
                 if(userMangement.checkIfLoginCorrect(info[0],info[1]))
-                System.out.println("Log in: OK");
-                else{
+                {
+                    sendData(new Packet(Packet.Packetid.LOGINOK, "Congrats!"));
+                    System.out.println("Log in: OK");
+                }
+                else
+                {
                     sendData( new Packet(Packet.Packetid.WRONGLOGIN,"Pakke Mottatt"));
+                    System.out.println("Auth fail - possible break-in attemp?!?!?!?!?!?!11");
+                    System.out.println(info[0] + ":" + info[1]);
                 }
 
                 break;
@@ -103,6 +105,11 @@ public class Service extends javafx.concurrent.Service<Void> {
                     {
                         userMangement.addUserToFile(info[0],info[1]);
                         System.out.println("Bruker er registret");
+                        sendData(new Packet(Packet.Packetid.REGISTEROK, "Welcome!"));
+                    }
+                    else
+                    {
+                        sendData(new Packet(Packet.Packetid.USERNAMETAKEN, "Have some originality"));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -116,7 +123,7 @@ public class Service extends javafx.concurrent.Service<Void> {
     }
 
 
-    public   void  sendData(Packet packet) throws IOException {
+    public void sendData(Packet packet) throws IOException {
 
         System.out.println("Data/pakke bir sendt til client");
         oot.writeObject(packet);
