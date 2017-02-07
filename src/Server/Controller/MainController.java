@@ -1,7 +1,7 @@
 package Server.Controller;
 
 import Server.Model.Server;
-import Server.Model.userMangement;
+import Server.Model.UserManagement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,7 +11,6 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Ali on 31.01.2017.
@@ -30,7 +29,7 @@ public class MainController {
     {
 
         try {
-            userMangement.readFile();
+            UserManagement.readFile();
         } catch (IOException e) {
             e.printStackTrace();
         }

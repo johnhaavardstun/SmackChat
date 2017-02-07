@@ -1,5 +1,7 @@
 package Server.Model;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
 /**
  * Created by Ali on 27.01.2017.
  */
@@ -11,19 +13,19 @@ public class User
         OFFLINE
     }
 
-    String username;
-    String password;
+    private String username;
+    private String password;
 
-    String ipadress;
-    int port;
+    private String ipadress;
+    private int port;
 
-    Status status;
+    private Status status;
 
     public User(String name, String password)
     {
         this.username=name;
         this.password=password;
-
+        this.status = Status.OFFLINE;
 
     }
 
@@ -36,15 +38,19 @@ public class User
     public void setIpadress(String ipadress) {
         this.ipadress = ipadress;
     }
+    public String getIpadress() { return status != Status.OFFLINE ? ipadress : null; }
 
     public void setPort(int port) {
         this.port = port;
     }
+    public int getPort() { return status != Status.OFFLINE ? port : -1; }
 
     public void setStatus(Status status) {
         this.status = status;
     }
+    public Status getStatus() { return status; }
 
+    public String getUsername() { return username; }
 
     public String toString()
     {

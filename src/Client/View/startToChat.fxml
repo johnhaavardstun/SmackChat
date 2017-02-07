@@ -11,14 +11,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="pain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ListView layoutX="-3.0" layoutY="66.0" prefHeight="333.0" prefWidth="206.0" />
+      <ListView fx:id="userList" layoutX="-3.0" layoutY="66.0" prefHeight="333.0" prefWidth="206.0" />
       <Button layoutX="39.0" layoutY="41.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" text="Connect" />
       <Button layoutX="540.0" layoutY="29.0" mnemonicParsing="false" text="Log out" />
       <TextField layoutX="203.0" layoutY="353.0" prefHeight="46.0" prefWidth="344.0" />
       <Button layoutX="547.0" layoutY="364.0" mnemonicParsing="false" text="Send" />
-      <ImageView fitHeight="192.0" fitWidth="273.0" layoutX="286.0" layoutY="104.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imgview" fitHeight="192.0" fitWidth="273.0" layoutX="286.0" layoutY="104.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../../../Desktop/hhahaha.jpg" />
          </image>

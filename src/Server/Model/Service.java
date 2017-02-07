@@ -81,11 +81,11 @@ public class Service extends javafx.concurrent.Service<Void> {
 
         System.out.println(packet.getPacketid());
         String data=packet.getMessage();
-        String[] info=data.split("§§§¤");
 
         switch (packet.getPacketid()){
             case LOGIN:
-                if(userMangement.checkIfLoginCorrect(info[0],info[1]))
+                String[] info=data.split("§§§¤");
+                if(UserManagement.checkIfLoginCorrect(info[0],info[1]))
                 {
                     sendData(new Packet(Packet.Packetid.LOGINOK, "Congrats!"));
                     System.out.println("Log in: OK");
@@ -99,11 +99,12 @@ public class Service extends javafx.concurrent.Service<Void> {
 
                 break;
             case REGISTER:
+                info=data.split("§§§¤");
 
                 try {
-                    if(userMangement.userExistTest(info[0]))
+                    if(UserManagement.userExistTest(info[0]))
                     {
-                        userMangement.addUserToFile(info[0],info[1]);
+                        UserManagement.addUserToFile(info[0],info[1]);
                         System.out.println("Bruker er registret");
                         sendData(new Packet(Packet.Packetid.REGISTEROK, "Welcome!"));
                     }
@@ -114,6 +115,13 @@ public class Service extends javafx.concurrent.Service<Void> {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                break;
+
+            case USERLISTREQUEST:
+                String users = UserManagement.getUserStatusList();
+                System.out.println(users);
+                sendData(new Packet(Packet.Packetid.USERLIST, users));
 
                 break;
 

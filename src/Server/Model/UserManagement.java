@@ -11,14 +11,14 @@ import java.util.Iterator;
 /**
  * Created by Ali on 27.01.2017.
  */
-public class userMangement
+public class UserManagement
 {
     public static String curLine;
     public static String testLine;
     public static  String usrN;
     public static String usrP;
 
-    static ArrayList<User> userList = new ArrayList<>();
+    private static ArrayList<User> userList = new ArrayList<>();
 
     public static void readFile() throws IOException {
 
@@ -56,7 +56,7 @@ public class userMangement
            for(Iterator it = userList.iterator(); it.hasNext();) {
 
             User u = (User) it.next();
-            if(un.equals(u.username)) return false;    // Returnerer false hvis bruker eksisterer
+            if(un.equals(u.getUsername())) return false;    // Returnerer false hvis bruker eksisterer
            }
            return true;
         }
@@ -83,7 +83,7 @@ public class userMangement
     {
         for (User user : userList)
         {
-            if(user.username.equals(username))
+            if(user.getUsername().equals(username))
             {
                 return user.passwordCheck(password);
             }
@@ -92,7 +92,23 @@ public class userMangement
         return false;
     }
 
+    public static String getUserStatusList() {
+        StringBuffer sb = new StringBuffer();
+
+        for (User u: userList)
+        {
+            switch (u.getStatus())
+            {
+                case ONLINE:  sb.append(1); break;
+                case BUSY:    sb.append(2); break;
+                case OFFLINE: sb.append(3); break;
+            }
+
+            sb.append(u.getUsername());
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
 
 }
-
-

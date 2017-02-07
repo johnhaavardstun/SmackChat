@@ -1,6 +1,5 @@
 package Server;
 
-import Server.Model.userMangement;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

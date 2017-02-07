@@ -19,11 +19,9 @@ public class Packet implements Serializable{
      BADREQUEST((byte)90),
      LOGINOK((byte) 58),
      REGISTEROK((byte) 40),
-     USERNAMETAKEN((byte) 61);
-
-
-
-
+     USERNAMETAKEN((byte) 61),
+     USERLISTREQUEST((byte) 100),
+     USERLIST((byte) 101);
 
 
      private final byte ID;

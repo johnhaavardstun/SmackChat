@@ -41,27 +41,31 @@ public class Client extends Task<Void> {
     {
         switch (packet.getPacketid()) {
             case USERNAMETAKEN:
-                this.updateMessage(System.currentTimeMillis() + "@USERNAMETAKEN");
+                this.updateMessage(System.currentTimeMillis() + "@USERNAMETAKEN!");
                 System.out.println("opptatt brukernavn");
                 break;
             case LOGINOK:
-                this.updateMessage(System.currentTimeMillis() + "@LOGINOK");
+                this.updateMessage(System.currentTimeMillis() + "@LOGINOK!");
                 System.out.println("Login - yay!");
                 break;
             case REGISTEROK:
-                this.updateMessage(System.currentTimeMillis() + "@REGISTEROK");
+                this.updateMessage(System.currentTimeMillis() + "@REGISTEROK!");
                 System.out.println("Suksessfull registrering");
                 break;
             case WRONGLOGIN:
-                this.updateMessage(System.currentTimeMillis() + "@WRONGLOGIN");
+                this.updateMessage(System.currentTimeMillis() + "@WRONGLOGIN!");
                 System.out.print("Dette er feil ifno");
                 break;
             case BADREQUEST:
-                this.updateMessage(System.currentTimeMillis() + "@BADREQUEST");
+                this.updateMessage(System.currentTimeMillis() + "@BADREQUEST!");
                 System.out.print("feil");
                 break;
+            case USERLIST:
+                this.updateMessage(System.currentTimeMillis() + "@USERLIST!" + packet.getMessage());
+                System.out.println("fikk user liste: " + packet.getMessage());
+                break;
             default:
-                this.updateMessage(System.currentTimeMillis() + "@BADREQUEST");
+                this.updateMessage(System.currentTimeMillis() + "@BADREQUEST!");
                 System.out.println("ukjent pakke");
         }
 
