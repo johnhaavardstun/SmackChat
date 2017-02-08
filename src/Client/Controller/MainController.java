@@ -127,7 +127,13 @@ public class MainController {
                         if (userStatus != null) {
                             setText(userStatus.getUserName());
                             String status = userStatus.getStatus().toString().toLowerCase();
-                            setGraphic(new ImageView("file:./View/" + "online" + ".png"));
+
+                            Image image= new Image(getClass().getResourceAsStream("../View/"+status+".png"));
+                            ImageView iw= new ImageView();
+                            iw.setImage(image);
+
+                            setGraphic(iw);
+                                    // "file:./View/" + "online" + ".png"
 
                         } else {
                             setText(null);
@@ -136,7 +142,6 @@ public class MainController {
                     }
                 };
 
-                cell.setContentDisplay(ContentDisplay.RIGHT);
                 return cell;
             }
         });

@@ -22,7 +22,6 @@ public class launcher extends Application {
 
 
         Parent root= FXMLLoader.load(chatload);
-        Parent shamil= FXMLLoader.load(chatload);
         Scene scene=new Scene(root,600,400);
         chat.setTitle("SmackChat!");
         chat.setScene(scene);
