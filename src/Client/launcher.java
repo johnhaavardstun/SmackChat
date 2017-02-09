@@ -4,8 +4,11 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
 
@@ -23,6 +26,7 @@ public class launcher extends Application {
 
         Parent root= FXMLLoader.load(chatload);
         Scene scene=new Scene(root,600,400);
+
         chat.setTitle("SmackChat!");
         chat.setScene(scene);
         chat.show();

@@ -7,11 +7,13 @@ import Server.Model.User;
  */
 public class UserStatus
 {
+
     public enum Status {
         ONLINE,
         BUSY,
         OFFLINE
     }
+
 
     private final String userName;
     private Status status;
@@ -20,6 +22,7 @@ public class UserStatus
         this.userName = userName;
         this.status = status;
     }
+
 
     public String getUserName() { return userName; };
     public Status getStatus() { return status; }

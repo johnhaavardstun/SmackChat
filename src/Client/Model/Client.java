@@ -13,6 +13,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Ali on 30.01.2017.
@@ -45,6 +47,18 @@ public class Client extends Task<Void> {
                 System.out.println("opptatt brukernavn");
                 break;
             case LOGINOK:
+                Timer timer= new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        try {
+                            sendData(new Packet(Packet.Packetid.USERLISTREQUEST,"Moren din"));
+                        } catch (IOException e) {
+
+
+                        }
+                    }
+                }, 1000, 5000);
                 this.updateMessage(System.currentTimeMillis() + "@LOGINOK!");
                 System.out.println("Login - yay!");
                 break;
@@ -82,6 +96,8 @@ public class Client extends Task<Void> {
 
         readinfo rd= new readinfo(s);
         rd.start();
+
+
 
         System.out.println("readinfo (tastatur) startet");
         return null;
@@ -157,4 +173,6 @@ public class Client extends Task<Void> {
         }
     }
 }
+
+
 
