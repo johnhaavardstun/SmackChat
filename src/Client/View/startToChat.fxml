@@ -5,25 +5,13 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane fx:id="pain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.Controller.MainController">
    <children>
-      <ListView fx:id="userList" layoutX="-3.0" layoutY="66.0" prefHeight="333.0" prefWidth="206.0" />
-      <Button layoutX="39.0" layoutY="41.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" text="Connect" />
-      <Button layoutX="540.0" layoutY="29.0" mnemonicParsing="false" text="Log out" />
-      <TextField layoutX="203.0" layoutY="353.0" prefHeight="46.0" prefWidth="344.0" />
-      <Button layoutX="547.0" layoutY="364.0" mnemonicParsing="false" text="Send" />
-      <ImageView fx:id="imgview" fitHeight="192.0" fitWidth="273.0" layoutX="286.0" layoutY="104.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../../Desktop/hhahaha.jpg" />
-         </image>
-      </ImageView>
-      <MenuBar layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="600.0">
+      <MenuBar layoutX="1.0" layoutY="2.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="2.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
@@ -42,5 +30,10 @@
           </Menu>
         </menus>
       </MenuBar>
+      <ListView fx:id="userList" layoutY="27.0" prefHeight="335.0" prefWidth="200.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="27.0" />
+      <TextArea layoutX="201.0" layoutY="27.0" prefHeight="335.0" prefWidth="399.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="201.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="27.0" />
+      <Button layoutX="19.0" layoutY="368.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="162.0" text="Connect" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="19.0" />
+      <TextField layoutX="202.0" layoutY="363.0" prefHeight="35.0" prefWidth="333.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="202.0" AnchorPane.rightAnchor="65.0" />
+      <Button layoutX="547.0" layoutY="368.0" mnemonicParsing="false" text="Send" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="12.0" />
    </children>
 </AnchorPane>
