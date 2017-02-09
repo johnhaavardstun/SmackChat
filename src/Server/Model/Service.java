@@ -17,6 +17,7 @@ public class Service extends javafx.concurrent.Service<Void> {
     Packet packet=null;
     ObjectOutputStream oot;
     ObjectInputStream oon;
+    User user;
 
     public Service(Socket s, String info) {
         this.socket = s;
@@ -71,10 +72,17 @@ public class Service extends javafx.concurrent.Service<Void> {
 
         };
 
+        task.stateProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == State.CANCELLED || newValue == State.FAILED || newValue == State.SUCCEEDED)
+            {
+                // klienten har disconnected?
+                if (user != null)
+                    UserManagement.setUserStatus(user, User.Status.OFFLINE);
+            }
+        });
+
         return task;
-
-
-        }
+    }
 
 
     public  void handleData(Packet packet) throws IOException {
@@ -87,6 +95,10 @@ public class Service extends javafx.concurrent.Service<Void> {
                 String[] info=data.split("§§§¤");
                 if(UserManagement.checkIfLoginCorrect(info[0],info[1]))
                 {
+                    // oppdater user status
+                    user = UserManagement.getUser(info[0]);
+                    UserManagement.setUserStatus(user, User.Status.ONLINE);
+
                     sendData(new Packet(Packet.Packetid.LOGINOK, "Congrats!"));
                     System.out.println("Log in: OK");
                 }

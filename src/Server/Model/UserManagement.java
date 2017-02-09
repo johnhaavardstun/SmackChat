@@ -1,12 +1,12 @@
 package Server.Model;
 
+import javafx.beans.value.ChangeListener;
+
 import java.io.*;
 import java.lang.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Ali on 27.01.2017.
@@ -18,7 +18,8 @@ public class UserManagement
     public static  String usrN;
     public static String usrP;
 
-    private static ArrayList<User> userList = new ArrayList<>();
+    private static List<User> userList = new ArrayList<>(); //FXCollections.observableArrayList();
+    private static List<ChangeListener<User.Status>> listeners = new ArrayList<>();
 
     public static void readFile() throws IOException {
 
@@ -94,9 +95,15 @@ public class UserManagement
 
     public static String getUserStatusList() {
         StringBuffer sb = new StringBuffer();
-
+//int i = 0;
         for (User u: userList)
         {
+//            switch (i % 3)
+//            {
+//                case 0: u.setStatus(User.Status.ONLINE); break;
+//                case 1: u.setStatus(User.Status.BUSY); break;
+//                case 2: u.setStatus(User.Status.OFFLINE); break;
+//            }i++;
             switch (u.getStatus())
             {
                 case ONLINE:  sb.append(1); break;
@@ -109,6 +116,47 @@ public class UserManagement
         }
 
         return sb.toString();
+    }
+
+    public static User getUser(String username)
+    {
+        for (User user: userList)
+        {
+            if (user.getUsername().equals(username))
+                return user;
+        }
+        return null;
+    }
+
+    public static List<User> getUsers()
+    {
+        return userList;
+    }
+
+    public static void addStatusListener(ChangeListener<User.Status> listener)
+    {
+        listeners.add(listener);
+    }
+
+    public static void setUserStatus(String username, User.Status status)
+    {
+        for (User user: userList)
+        {
+            if (user.getUsername().equals(username))
+            {
+                setUserStatus(user, status);
+                return;
+            }
+        }
+    }
+
+    public static void setUserStatus(User user,  User.Status status) {
+        if (user == null) throw new NullPointerException("User can not be null!");
+
+        User.Status oldStatus = user.getStatus();
+        user.setStatus(status);
+        for (ChangeListener listener: listeners)
+            listener.changed(null, oldStatus, status);
     }
 
 }

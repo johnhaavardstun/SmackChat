@@ -1,6 +1,7 @@
 package Server.Model;
 
 import com.sun.org.apache.bcel.internal.generic.RETURN;
+import javafx.beans.value.ObservableValue;
 
 /**
  * Created by Ali on 27.01.2017.
@@ -26,7 +27,6 @@ public class User
         this.username=name;
         this.password=password;
         this.status = Status.OFFLINE;
-
     }
 
     public boolean passwordCheck(String pass){

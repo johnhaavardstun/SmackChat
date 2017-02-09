@@ -4,7 +4,6 @@ package Client.Controller;
 import Client.Model.Client;
 import Client.Model.Packet;
 import Client.Model.UserStatus;
-import Server.Model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,10 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import sun.plugin.javascript.navig.Anchor;
 
 import java.io.IOException;
 import java.net.URL;
@@ -91,9 +88,9 @@ public class MainController {
         ObservableList<UserStatus> newList = FXCollections.observableList(new ArrayList<>());
         for (String user: users)
         {
-            int statusid = user.charAt(0);
-            UserStatus.Status status = statusid == 1 ? UserStatus.Status.ONLINE :
-                    (statusid == 2 ? UserStatus.Status.BUSY : UserStatus.Status.OFFLINE);
+            char statusid = user.charAt(0);
+            UserStatus.Status status = statusid == '1' ? UserStatus.Status.ONLINE :
+                    (statusid == '2' ? UserStatus.Status.BUSY : UserStatus.Status.OFFLINE);
             newList.add(new UserStatus(user.substring(1), status));
         }
         userList.setItems(newList);
@@ -117,25 +114,40 @@ public class MainController {
 
         userList.setCellFactory(new Callback<ListView<UserStatus>, ListCell<UserStatus>>() {
 
+            final Image onlineImage = new Image(getClass().getResourceAsStream("../View/online.png"));
+            final Image offlineImage = new Image(getClass().getResourceAsStream("../View/offline.png"));
+            final Image busyImage = new Image(getClass().getResourceAsStream("../View/busy.png"));
+
             @Override
-            public ListCell<UserStatus> call(ListView<UserStatus> param) {
-                ListCell<UserStatus> cell = new ListCell<UserStatus>() {
+            public ListCell<UserStatus> call(ListView<UserStatus> param)
+            {
+                ListCell<UserStatus> cell = new ListCell<UserStatus>()
+                {
+
+                    final ImageView statusIcon;
+
+                    {
+                        statusIcon = new ImageView();
+                    }
 
                     @Override
-                    protected void updateItem(UserStatus userStatus,  boolean empty) {
+                    protected void updateItem(UserStatus userStatus,  boolean empty)
+                    {
                         super.updateItem(userStatus, empty);
-                        if (userStatus != null) {
+                        if (userStatus != null)
+                        {
+                            switch (userStatus.getStatus())
+                            {
+                                case ONLINE: statusIcon.setImage(onlineImage); break;
+                                case OFFLINE: statusIcon.setImage(offlineImage); break;
+                                case BUSY: statusIcon.setImage(busyImage); break;
+                                default: statusIcon.setImage(null);
+                            }
+
                             setText(userStatus.getUserName());
-                            String status = userStatus.getStatus().toString().toLowerCase();
-
-                            Image image= new Image(getClass().getResourceAsStream("../View/"+status+".png"));
-                            ImageView iw= new ImageView();
-                            iw.setImage(image);
-
-                            setGraphic(iw);
-                                    // "file:./View/" + "online" + ".png"
-
-                        } else {
+                            setGraphic(statusIcon);
+                        }
+                        else {
                             setText(null);
                             setGraphic(null);
                         }
@@ -145,15 +157,13 @@ public class MainController {
                 return cell;
             }
         });
-// TODO: LOTS A STUFF
-//        ((AnchorPane) userList.getScene().lookup("#pain")).getChildren().add(new ImageView("file:./View/" + "online" + ".png"));
-        ((ImageView) userList.getScene().lookup("#imgview")).setImage(new Image("file:./View/" + "online" + ".png"));
 
-        try {
+        try
+        {
             c.sendData(new Packet(Packet.Packetid.USERLISTREQUEST, null));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-//            System.exit(9876);
         }
     }
 

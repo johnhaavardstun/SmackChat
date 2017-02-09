@@ -46,6 +46,7 @@ public class Server extends Task<Void> {
     {
         System.out.println("Starter tråd");
         Thread th= new Thread(this);
+        th.setDaemon(true);
         th.start();
     }
 }
