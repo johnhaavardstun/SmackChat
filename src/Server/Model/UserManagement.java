@@ -77,7 +77,7 @@ public class UserManagement
         userList.add(newUser);
 
         wFile.close();
-        System.out.println(ArraytoString());
+        //System.out.println(ArraytoString());
     }
 
     public static Boolean checkIfLoginCorrect(String username, String password)
