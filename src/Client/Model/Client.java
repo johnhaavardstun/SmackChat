@@ -76,7 +76,11 @@ public class Client extends Task<Void> {
                 break;
             case USERLIST:
                 this.updateMessage(System.currentTimeMillis() + "@USERLIST!" + packet.getMessage());
-                System.out.println("fikk user liste: " + packet.getMessage());
+                //System.out.println("fikk user liste: " + packet.getMessage());
+                break;
+            case INCOMINGCONNECTION:
+                this.updateMessage(System.currentTimeMillis() +"@CHAT!"+packet.getMessage());
+                System.out.print("Motok en request.");
                 break;
             default:
                 this.updateMessage(System.currentTimeMillis() + "@BADREQUEST!");

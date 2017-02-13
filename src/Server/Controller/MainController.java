@@ -39,7 +39,7 @@ public class MainController {
             list.setItems(FXCollections.observableList(UserManagement.getUsers()));
             UserManagement.addStatusListener((observable, oldValue, newValue) -> {
                 System.out.println("user status endret...");
-                System.out.println(newValue);
+                //System.out.println(newValue);
                 Platform.runLater(() -> {
                     System.out.println("kjøres dette noensinne?");
                     list.setItems(null);
@@ -79,7 +79,7 @@ public class MainController {
                         super.updateItem(user, empty);
                         if (user != null)
                         {
-                            System.out.println(user.getUsername() + ":" + user.getStatus());
+                           // System.out.println(user.getUsername() + ":" + user.getStatus());
                             switch (user.getStatus())
                             {
                                 case ONLINE: statusIcon.setImage(onlineImage); break;

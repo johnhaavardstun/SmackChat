@@ -2,10 +2,9 @@ package Server.Model;
 
 import javafx.concurrent.Task;
 
-import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Ali on 31.01.2017.
@@ -14,6 +13,10 @@ public class Server extends Task<Void> {
 
 
     final int PORT=8000;
+    static ConcurrentHashMap<String, Service<V>> map=new ConcurrentHashMap<>();
+
+
+
 
 
     public Server()
@@ -36,7 +39,7 @@ public class Server extends Task<Void> {
 
             System.out.println("Har akseptert client connection"+ s.getInetAddress().getHostAddress());
 
-            Service sd= new Service(s,s.getInetAddress().getHostAddress() );
+            Service<V> sd= new Service<V>(s,s.getInetAddress().getHostAddress() );
             sd.start();
         }
 

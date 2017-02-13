@@ -10,7 +10,7 @@ import java.net.Socket;
 /**
  * Created by Ali on 02.02.2017.
  */
-public class Service extends javafx.concurrent.Service<Void> {
+public class Service<V> extends javafx.concurrent.Service<Void> {
 
     Socket socket;
     private String clientinfo;
@@ -98,7 +98,7 @@ public class Service extends javafx.concurrent.Service<Void> {
                     // oppdater user status
                     user = UserManagement.getUser(info[0]);
                     UserManagement.setUserStatus(user, User.Status.ONLINE);
-
+                        Server.map.put(info[0],this);
                     sendData(new Packet(Packet.Packetid.LOGINOK, "Congrats!"));
                     System.out.println("Log in: OK");
                 }
@@ -137,6 +137,10 @@ public class Service extends javafx.concurrent.Service<Void> {
 
                 break;
 
+            case CONNECTIONREQUEST:
+                System.out.print(data);
+                Server.map.get(data).sendData(new Packet(Packet.Packetid.INCOMINGCONNECTION,"Bongo wants to chat with you"));
+            break;
             case BADREQUEST:
         }
 

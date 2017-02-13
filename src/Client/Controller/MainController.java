@@ -28,9 +28,9 @@ public class MainController {
 
     @FXML Button butteng;
     @FXML Button Register;
-
+    @FXML Button connect;
     @FXML ListView<UserStatus> userList;
-
+    @FXML TextArea chatbox;
     String  superdupercode="§§§¤";
     Client c;
 
@@ -38,6 +38,7 @@ public class MainController {
     {
         c = new Client();
         c.start();
+
 
         c.messageProperty().addListener(((observable, oldValue, newValue) -> {
             onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
@@ -77,8 +78,16 @@ public class MainController {
                 updateUserList(data);
 //                System.out.println(data);
                 break;
-            case "BADREQUEST":
+            case "CHAT":
+                    System.out.print("Motok en chat reuqest");
+                    showMessageToClient(AlertType.CONFIRMATION,"Incoming connectionb oy!","haha");
+              break;
+            case "CHATMESSAGE":
+               System.out.println("Har motatt chat melding!");
+                break;
+               case "BADREQUEST":
                 System.out.println("skjedde en feil");
+
 
         }
     }
@@ -192,7 +201,7 @@ public class MainController {
 
             Packet pa= new Packet(Packet.Packetid.LOGIN,sd);
 
-            System.out.println(pa.getMessage() +"       "+pa.getPacketid());
+            //System.out.println(pa.getMessage() +"       "+pa.getPacketid());
             c.sendData(pa);
 
 
@@ -231,6 +240,20 @@ public class MainController {
     {
         String s=tx.getText();
         return s;
+
+    }
+
+    public void connectionRequest()
+    {
+        String s= userList.getSelectionModel().getSelectedItem().getUserName();
+        System.out.println(s);
+
+        try {
+            c.sendData(new Packet(Packet.Packetid.CONNECTIONREQUEST,s));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 }
