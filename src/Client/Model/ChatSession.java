@@ -144,6 +144,13 @@ public ChatSession(String ip, int port)
             return task;
         }
     }
+
+   public void sendMessage( String massage)
+   {
+       pwriter.write(massage);
+    pwriter.flush();
+
+   }
 }
 
 
