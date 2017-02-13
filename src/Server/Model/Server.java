@@ -13,7 +13,7 @@ public class Server extends Task<Void> {
 
 
     final int PORT=8000;
-    static ConcurrentHashMap<String, Service<V>> map=new ConcurrentHashMap<>();
+    static ConcurrentHashMap<String, Service> map=new ConcurrentHashMap<>();
 
 
 
@@ -39,7 +39,7 @@ public class Server extends Task<Void> {
 
             System.out.println("Har akseptert client connection"+ s.getInetAddress().getHostAddress());
 
-            Service<V> sd= new Service<V>(s,s.getInetAddress().getHostAddress() );
+            Service sd= new Service(s,s.getInetAddress().getHostAddress() );
             sd.start();
         }
 
