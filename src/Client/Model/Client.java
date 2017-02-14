@@ -80,7 +80,11 @@ public class Client extends Task<Void> {
                 break;
             case INCOMINGCONNECTION:
                 this.updateMessage(System.currentTimeMillis() +"@CHAT!"+packet.getMessage());
-                System.out.print("Motok en request.");
+                System.out.print("Mottok en request.");
+                break;
+            case CONNECTIONINFORMATION:
+                this.updateMessage(System.currentTimeMillis() +"@CONNECTIONINFORMATION!" + packet.getMessage());
+                System.out.println("Mottok kontakt informasjon");
                 break;
             default:
                 this.updateMessage(System.currentTimeMillis() + "@BADREQUEST!");
@@ -143,17 +147,17 @@ public class Client extends Task<Void> {
 
                         while ((true)) {
 
-                            System.out.println("leser Objekt input stream");
+                    //   System.out.println("leser Objekt input stream");
 
                             if((packet=(Packet)oin.readObject())!=null)
                             {
-                                System.out.println(packet.getMessage()+"   "+packet.getPacketid());
+                             //   System.out.println(packet.getMessage()+"   "+packet.getPacketid());
                                 handleData(packet);
                             }
 
 
 
-                            System.out.println("Objektet er ferdig lest");
+                           // System.out.println("Objektet er ferdig lest");
 
 
                         }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * Created by Ali on 02.02.2017.
@@ -89,12 +90,13 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
         System.out.println(packet.getPacketid());
         String data=packet.getMessage();
-
+        String brukernavn="";
         switch (packet.getPacketid()){
             case LOGIN:
                 String[] info=data.split("§§§¤");
                 if(UserManagement.checkIfLoginCorrect(info[0],info[1]))
                 {
+                    brukernavn=info[0];
                     // oppdater user status
                     user = UserManagement.getUser(info[0]);
                     UserManagement.setUserStatus(user, User.Status.ONLINE);
@@ -132,15 +134,21 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
             case USERLISTREQUEST:
                 String users = UserManagement.getUserStatusList();
-                System.out.println(users);
+                //System.out.println(users);
                 sendData(new Packet(Packet.Packetid.USERLIST, users));
 
                 break;
 
             case CONNECTIONREQUEST:
-                System.out.print(data);
-                Server.map.get(data).sendData(new Packet(Packet.Packetid.INCOMINGCONNECTION,"Bongo wants to chat with you"));
+                System.out.print("Conn req: " + data + " ønsker å chatte med " + "..."+brukernavn );
+                Server.map.get(data).sendData(new Packet(Packet.Packetid.INCOMINGCONNECTION, "Eple"));
             break;
+            case CONNECTIONACCEPTED:
+                String[] connectInfo = data.split(":"); // [0] = ip, [1] = port, [3] = userName
+                System.out.print(Arrays.toString(connectInfo));
+                Server.map.get(connectInfo[2]).sendData(new Packet(Packet.Packetid.CONNECTIONINFORMATION,
+                                                        connectInfo[0] + ":" + connectInfo[1]));
+                break;
             case BADREQUEST:
         }
 
