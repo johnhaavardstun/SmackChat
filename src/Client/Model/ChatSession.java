@@ -6,6 +6,7 @@ import javafx.concurrent.Task;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * Created by Ali on 13.02.2017.
@@ -27,7 +28,10 @@ public ChatSession(String ip, int port)
     this.ip=ip;
     this.port=port;
     try {
+        System.out.println("connecter");
         this.sc= new Socket(ip,port);
+        System.out.println("ferdig connected");
+
     } catch (IOException e) {
         e.printStackTrace();
     }
@@ -38,10 +42,8 @@ public ChatSession(String ip, int port)
     public ChatSession( )
     {
 
-        this.port=port;
         try {
             this.ssc= new ServerSocket(0);
-            this.sc=ssc.accept();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,9 +53,15 @@ public ChatSession(String ip, int port)
 
     @Override
     protected Void call() throws Exception {
-        pwriter= new PrintWriter(sc.getOutputStream());
+            if(sc == null)
+                        sc=ssc.accept();
+
+
+               System.out.println("kommer seg forbi");
+                pwriter= new PrintWriter(sc.getOutputStream());
         messageIn min= new messageIn(sc);
         min.start();
+        System.out.println("ferdig!");
 
         return  null;
 
@@ -69,13 +77,23 @@ public ChatSession(String ip, int port)
         });
 
     }
+    public void sendMessage(String massage)
+    {
+        pwriter.write(massage);
+        pwriter.flush();
 
+    }
 
 
     public String getServerIP()
  {
 
-     String s=ssc.getInetAddress().toString();
+     String s= null;
+     try {
+         s = ssc.getInetAddress().getLocalHost().getHostAddress();
+     } catch (UnknownHostException e) {
+         e.printStackTrace();
+     }
      return s;
  }
 
@@ -116,6 +134,7 @@ public ChatSession(String ip, int port)
 
                             if((s=iin.readLine())!=null)
                             {
+                                updateMessage("MESSAGE!"+s);
                                 System.out.print(s);
                             }
 
@@ -145,12 +164,7 @@ public ChatSession(String ip, int port)
         }
     }
 
-   public void sendMessage( String massage)
-   {
-       pwriter.write(massage);
-    pwriter.flush();
 
-   }
 }
 
 

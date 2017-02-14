@@ -19,10 +19,7 @@ public class Server extends Task<Void> {
 
 
 
-    public Server()
-    {
 
-    }
 
 
 

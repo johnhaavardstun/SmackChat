@@ -20,7 +20,7 @@ public class launcher extends Application {
     public void start(Stage server) throws IOException {
 
         URL serverLoad= getClass().getResource(FXMLFILE);
-        server.getIcons().add(new Image("./Server/View/server.png"));
+        //server.getIcons().add(new Image("./Server/View/server.png"));
 
 
         Parent root= FXMLLoader.load(serverLoad);

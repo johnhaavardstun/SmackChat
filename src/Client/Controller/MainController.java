@@ -1,6 +1,7 @@
 package Client.Controller;
 
 
+import Client.Model.ChatSession;
 import Client.Model.Client;
 import Client.Model.Packet;
 import Client.Model.UserStatus;
@@ -20,6 +21,8 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
 
 public class MainController {
 
@@ -31,8 +34,11 @@ public class MainController {
     @FXML Button connect;
     @FXML ListView<UserStatus> userList;
     @FXML TextArea chatbox;
+    @FXML TextField textField;
+
     String  superdupercode="§§§¤";
     Client c;
+    ChatSession cSession;
 
     public void initialize()
     {
@@ -79,15 +85,25 @@ public class MainController {
 //                System.out.println(data);
                 break;
             case "CHAT":
-                    System.out.print("Motok en chat reuqest");
-                    showMessageToClient(AlertType.CONFIRMATION,"Incoming connectionb oy!","haha");
-              break;
+                System.out.print("Mottok en chat reuqest");
+                chatConfirmation(data);
+                break;
             case "CHATMESSAGE":
                System.out.println("Har motatt chat melding!");
                 break;
-               case "BADREQUEST":
+            case "BADREQUEST":
                 System.out.println("skjedde en feil");
+                break;
+            case "CONNECTIONINFORMATION":
+                String[] cinfo = data.split(":");
+                System.out.println(Arrays.toString(cinfo));
+                startChatConnect(cinfo[0], Integer.parseInt(cinfo[1]));
+                System.out.println("Mottok kontakt informasjon!");
+    break;
+            case "MESSAGE":
 
+                chatbox.appendText("Chatter med:"+data+'\n');
+                break;
 
         }
     }
@@ -176,13 +192,14 @@ public class MainController {
         }
     }
 
-    public  static void showMessageToClient(AlertType type,String title, String text)
+    public  static Optional<ButtonType> showMessageToClient(AlertType type,String title, String text)
     {
         Alert alert= new Alert(type);
         alert.setTitle(title);
         alert.setContentText(text);
 
-        alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
+        return result;
 
     }
 
@@ -245,15 +262,74 @@ public class MainController {
 
     public void connectionRequest()
     {
-        String s= userList.getSelectionModel().getSelectedItem().getUserName();
-        System.out.println(s);
+        UserStatus statusU = userList.getSelectionModel().getSelectedItem();
+        if(statusU != null && statusU.getStatus() == UserStatus.Status.ONLINE) {
 
-        try {
-            c.sendData(new Packet(Packet.Packetid.CONNECTIONREQUEST,s));
-        } catch (IOException e) {
-            e.printStackTrace();
+            String s = statusU.getUserName();
+            System.out.println(s);
+                try {
+                    c.sendData(new Packet(Packet.Packetid.CONNECTIONREQUEST, s));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+        }
+    }
+
+    public void chatConfirmation(String userName)
+    {
+        Optional<ButtonType> result = showMessageToClient(AlertType.CONFIRMATION,
+                "Accept?","Chat request from " + userName + "!");
+
+        if(result.get() == ButtonType.OK)
+        {
+            try {
+
+                cSession = new ChatSession();
+                cSession.start();
+                cSession.messageProperty().addListener(((observable, oldValue, newValue) -> {
+                    onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
+                            newValue.substring(1 + newValue.indexOf('!')));
+                }));
+                String connectionInfo = "127.0.0.1" + ":" + cSession.getServerPort() + ":" + userName;
+                System.out.println(connectionInfo);
+                c.sendData(new Packet(Packet.Packetid.CONNECTIONACCEPTED, connectionInfo));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
+        else
+        {
+            try {
+                c.sendData(new Packet(Packet.Packetid.CONNECTIONREFUSED, userName));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void startChatConnect(String ip, int port)
+    {
+        cSession = new ChatSession(ip, port);
+        cSession.start();
+        cSession.messageProperty().addListener(((observable, oldValue, newValue) -> {
+            onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
+                    newValue.substring(1 + newValue.indexOf('!')));
+        }));
+        System.out.println("Client 2 og Client 1 har connected med hverandre");
 
     }
+
+
+
+  public void getSendMessage()
+  {
+
+      String s= textField.getText();
+      chatbox.appendText("Meg:"+s+'\n');
+    System.out.println("Sender Dette"+s);
+        cSession.sendMessage(s);
+  }
+
 }
