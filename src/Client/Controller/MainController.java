@@ -32,29 +32,34 @@ public class MainController {
     @FXML Button butteng;
     @FXML Button Register;
     @FXML Button connect;
+    @FXML Button send;
     @FXML ListView<UserStatus> userList;
     @FXML TextArea chatbox;
     @FXML TextField textField;
 
     String  superdupercode="§§§¤";
     Client c;
-    ChatSession cSession;
+    volatile ChatSession cSession;
+    static boolean firstRun = false;
 
     public void initialize()
     {
-        c = new Client();
-        c.start();
+        if (!firstRun) {
+            firstRun = true;
+            c = new Client();
+            c.start();
+            System.out.println(Thread.currentThread().getName() + " >>> " + c);
 
+            c.messageProperty().addListener(((observable, oldValue, newValue) -> {
+                onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
+                                newValue.substring(1 + newValue.indexOf('!')));
+            }));
 
-        c.messageProperty().addListener(((observable, oldValue, newValue) -> {
-            onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
-                            newValue.substring(1 + newValue.indexOf('!')));
-        }));
-
-        c.exceptionProperty().addListener((observable, oldValue, newValue) -> {
-            showMessageToClient(AlertType.ERROR, "Server error!", newValue.getMessage());
-            System.exit(876);
-        });
+            c.exceptionProperty().addListener((observable, oldValue, newValue) -> {
+                showMessageToClient(AlertType.ERROR, "Server error!", newValue.getMessage());
+                System.exit(876);
+            });
+        }
     }
 
 
@@ -89,7 +94,8 @@ public class MainController {
                 chatConfirmation(data);
                 break;
             case "CHATMESSAGE":
-               System.out.println("Har motatt chat melding!");
+                System.out.println("Har motatt chat melding!");
+                incomingChatMessage(data);
                 break;
             case "BADREQUEST":
                 System.out.println("skjedde en feil");
@@ -126,9 +132,25 @@ public class MainController {
         URL chatload= getClass().getResource("../View/startToChat.fxml");
         Parent root = null;
         try {
-            root= FXMLLoader.load(chatload);
+            FXMLLoader fxml = new FXMLLoader(chatload);
+            fxml.setController(this);
+            root = fxml.load();
+//            root= FXMLLoader.load();
+            /*
+            <ListView fx:id="userList" layoutY="27.0" prefHeight="335.0" prefWidth="200.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="27.0" />
+      <TextArea fx:id="chatbox" layoutX="201.0" layoutY="27.0" prefHeight="335.0" prefWidth="399.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="201.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="27.0" />
+      <Button fx:id="connect" layoutX="19.0" layoutY="368.0" mnemonicParsing="false" onAction="#connectionRequest" prefHeight="25.0" prefWidth="162.0" text="Connect" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="19.0" />
+      <TextField fx:id="textField" layoutX="202.0" layoutY="363.0" prefHeight="35.0" prefWidth="333.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="202.0" AnchorPane.rightAnchor="65.0" />
+      <Button fx:id="send" onAction="#getSendMessage" layoutX="547.0" layoutY="368.0" mnemonicParsing="false" text="Send" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="12.0" />
+             */
+//            userList = (ListView<UserStatus>) root.lookup("#userList");
+//            connect = (Button) root.lookup("#connect");
+//            textField = (TextField) root.lookup("#textField");
+//            send = (Button) root.lookup("#send");
+//            send.setOnAction(event -> getSendMessage());
         } catch (IOException e) {
             showMessageToClient(AlertType.ERROR, "Srz errror", "PANIC");
+            e.printStackTrace();
             System.exit(9876543);
         }
 
@@ -220,6 +242,7 @@ public class MainController {
 
             //System.out.println(pa.getMessage() +"       "+pa.getPacketid());
             c.sendData(pa);
+            System.out.println(Thread.currentThread().getName() + " >>> " + c);
 
 
         } catch (IOException e) {
@@ -260,6 +283,7 @@ public class MainController {
 
     }
 
+    @FXML
     public void connectionRequest()
     {
         UserStatus statusU = userList.getSelectionModel().getSelectedItem();
@@ -291,6 +315,8 @@ public class MainController {
                     onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
                             newValue.substring(1 + newValue.indexOf('!')));
                 }));
+                cSession.messageProperty().addListener((observable, oldValue, newValue) -> System.out.println("P2P Message: " + newValue));
+                System.out.println(Thread.currentThread().getName() + " >>> " + c);
                 String connectionInfo = "127.0.0.1" + ":" + cSession.getServerPort() + ":" + userName;
                 System.out.println(connectionInfo);
                 c.sendData(new Packet(Packet.Packetid.CONNECTIONACCEPTED, connectionInfo));
@@ -317,6 +343,8 @@ public class MainController {
             onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
                     newValue.substring(1 + newValue.indexOf('!')));
         }));
+        cSession.messageProperty().addListener((observable, oldValue, newValue) -> System.out.println("P2P Message: " + newValue));
+        System.out.println(Thread.currentThread().getName() + " >>> " + c);
         System.out.println("Client 2 og Client 1 har connected med hverandre");
 
     }
@@ -327,9 +355,21 @@ public class MainController {
   {
 
       String s= textField.getText();
-      chatbox.appendText("Meg:"+s+'\n');
-    System.out.println("Sender Dette"+s);
-        cSession.sendMessage(s);
+      chatbox.appendText("Meg: " + s + '\n');
+      textField.setText(null);
+//    System.out.println("Sender Dette"+s);
+      System.out.println(Thread.currentThread().getName() + " >>> " + c);
+//        cSession.sendMessage(s);
+      try {
+          cSession.sendData(new Packet(Packet.Packetid.CHATMESSAGE, s));
+      } catch (IOException e) {
+          showMessageToClient(AlertType.ERROR, "Error!", "Unexpected error sending message!");
+      }
   }
+
+    public void incomingChatMessage(String message)
+    {
+        chatbox.appendText("Deg: " + message + "\n");
+    }
 
 }

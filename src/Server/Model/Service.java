@@ -23,11 +23,12 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
     public Service(Socket s, String info) {
         this.socket = s;
         this.clientinfo = info;
-
+        System.out.println(">>>>>> Service created: " + s.getInetAddress().getHostAddress() + ":" + s.getPort() + " <<<<<<");
     }
 
     @Override
     protected Task<Void> createTask() {
+        System.out.println(">>>>>> Task created! " + this + " <<<<<<");
 
         Task<Void> task= new Task<Void>() {
 
@@ -86,7 +87,7 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
     }
 
 
-    public  void handleData(Packet packet) throws IOException {
+    public synchronized void handleData(Packet packet) throws IOException {
 
         System.out.println(packet.getPacketid());
         String data=packet.getMessage();
@@ -99,6 +100,7 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                     brukernavn=info[0];
                     // oppdater user status
                     user = UserManagement.getUser(info[0]);
+                    System.out.println(Thread.currentThread().getName() + " >>> " + user);
                     UserManagement.setUserStatus(user, User.Status.ONLINE);
                         Server.map.put(info[0],this);
                     sendData(new Packet(Packet.Packetid.LOGINOK, "Congrats!"));
@@ -136,16 +138,18 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                 String users = UserManagement.getUserStatusList();
                 //System.out.println(users);
                 sendData(new Packet(Packet.Packetid.USERLIST, users));
-
+                System.out.println(Thread.currentThread().getName() + " >>> " + user);
                 break;
 
             case CONNECTIONREQUEST:
-                System.out.print("Conn req: " + data + " ønsker å chatte med " + "..."+brukernavn );
-                Server.map.get(data).sendData(new Packet(Packet.Packetid.INCOMINGCONNECTION, "Eple"));
+                System.out.println("Conn req: " + data + " ønsker å chatte med " + "..."+data );
+                System.out.println(Thread.currentThread().getName() + " >>> " + user);
+                Server.map.get(data).sendData(new Packet(Packet.Packetid.INCOMINGCONNECTION, user.getUsername()));
             break;
             case CONNECTIONACCEPTED:
-                String[] connectInfo = data.split(":"); // [0] = ip, [1] = port, [3] = userName
-                System.out.print(Arrays.toString(connectInfo));
+                String[] connectInfo = data.split(":"); // [0] = ip, [1] = port, [2] = userName
+                System.out.println(Arrays.toString(connectInfo));
+                System.out.println(Thread.currentThread().getName() + " >>> " + user);
                 Server.map.get(connectInfo[2]).sendData(new Packet(Packet.Packetid.CONNECTIONINFORMATION,
                                                         connectInfo[0] + ":" + connectInfo[1]));
                 break;
