@@ -25,6 +25,8 @@ public class launcher extends Application {
 
         Parent root= FXMLLoader.load(serverLoad);
         Scene scene=new Scene(root,600,400);
+        server.getIcons().add(new Image("./Server/View/server.png"));
+
         server.setTitle("Server");
         server.setScene(scene);
         server.show();
