@@ -114,8 +114,10 @@ public class Client extends Task<Void> {
 
     public void start()
     {
+        System.out.println("|>|>|> Client created! <|<|<|");
         Thread t= new Thread(this);
         t.start();
+        System.out.println("Client thread: " + t.getName());
         t.setUncaughtExceptionHandler((thr, e) -> {
             this.setException(e);
         });

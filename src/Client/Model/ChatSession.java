@@ -19,9 +19,11 @@ public class ChatSession extends Task<Void> {
     ServerSocket ssc;
 
 PrintWriter pwriter;
+    private ObjectOutputStream oos;
+    private ObjectInputStream ois;
 
 
-//To contact
+    //To contact
 public ChatSession(String ip, int port)
 {
 
@@ -53,13 +55,14 @@ public ChatSession(String ip, int port)
 
     @Override
     protected Void call() throws Exception {
-            if(sc == null)
-                        sc=ssc.accept();
+        if(sc == null)
+            sc=ssc.accept();
 
-
-               System.out.println("kommer seg forbi");
-                pwriter= new PrintWriter(sc.getOutputStream());
-        messageIn min= new messageIn(sc);
+        System.out.println("kommer seg forbi");
+        pwriter= new PrintWriter(sc.getOutputStream());
+        oos = new ObjectOutputStream(sc.getOutputStream());
+        ois = new ObjectInputStream((sc.getInputStream()));
+        messageIn min= new messageIn(this);
         min.start();
         System.out.println("ferdig!");
 
@@ -79,40 +82,45 @@ public ChatSession(String ip, int port)
     }
     public void sendMessage(String massage)
     {
-        pwriter.write(massage);
-        pwriter.flush();
+        System.out.println("Sender melding: " + massage);
+        System.out.println(sc.getLocalAddress() + ":" + sc.getLocalPort() + " --> " + sc.getInetAddress().getHostAddress() + ":" + sc.getPort());
+        pwriter.println(massage);
+//        pwriter.write(massage);
+//        pwriter.flush();
 
     }
 
 
+    public void  sendData(Packet packet) throws IOException {
+        System.out.println("data bir sendt");
+        oos.writeObject(packet);
+        oos.flush();
+    }
+
+
     public String getServerIP()
- {
+    {
+        String s= null;
+        s = ssc.getInetAddress().getHostAddress();
+        return s;
+    }
 
-     String s= null;
-     try {
-         s = ssc.getInetAddress().getLocalHost().getHostAddress();
-     } catch (UnknownHostException e) {
-         e.printStackTrace();
+     public int getServerPort()
+     {
+         int i=ssc.getLocalPort();
+         return i;
      }
-     return s;
- }
-
- public int getServerPort()
- {
-     int i=ssc.getLocalPort();
-     return i;
- }
 
 
 
     private class messageIn extends javafx.concurrent.Service<Void>
     {
-        Socket socket;
+        ChatSession chat;
 
 
-        private messageIn(Socket socket)
+        private messageIn(ChatSession chatSession)
         {
-            this.socket=socket;
+            this.chat = chatSession;
         }
 
         @Override
@@ -125,28 +133,44 @@ public ChatSession(String ip, int port)
 
 
                     try {
+                        System.out.println(sc.getLocalAddress() + ":" + sc.getLocalPort() + " --> " + sc.getInetAddress().getHostAddress() + ":" + sc.getPort());
+//                        System.out.println(socket.getLocalAddress() + ":" + socket.getLocalPort() + " --> " + socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
 
-                        BufferedReader iin= new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        BufferedReader iin= new BufferedReader(new InputStreamReader(sc.getInputStream()));
                         String s;
-                        while ((true)) {
+//                        while (( s = iin.readLine() ) != null) {
+//
+//                            System.out.println("leser meldinger");
+//
+//
+////                            if()
+////                            {
+//                                System.out.print("Mottok chat: ");
+//                                updateMessage("MESSAGE!"+s);
+//                                System.out.println(s);
+////                            }
+//
+//
+//
+//                            System.out.println("melding lest");
+//
+//
+//                        }
 
-                            System.out.println("leser meldinger");
-
-                            if((s=iin.readLine())!=null)
+                        while ((true))
+                        {
+                            Packet packet;
+                            if((packet=(Packet)ois.readObject())!=null)
                             {
-                                updateMessage("MESSAGE!"+s);
-                                System.out.print(s);
+                                //   System.out.println(packet.getMessage()+"   "+packet.getPacketid());
+                                System.out.println("mottatt: " + packet.getPacketid() + ":" + packet.getMessage());
+                                chat.updateMessage(System.currentTimeMillis() + "@CHATMESSAGE!" + packet.getMessage());
+
                             }
-
-
-
-                            System.out.println("melding lest");
-
-
                         }
 
                     } catch (IOException e) {
-                        this.updateMessage("CHATCLOSED");
+                        chat.updateMessage(System.currentTimeMillis() + "@CHATCLOSED!");
 //                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
