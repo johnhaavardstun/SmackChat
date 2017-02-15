@@ -39,7 +39,7 @@ public class MainController {
 
     String  superdupercode="§§§¤";
     Client c;
-    volatile ChatSession cSession;
+     ChatSession cSession;
     static boolean firstRun = false;
 
     public void initialize()
@@ -135,6 +135,8 @@ public class MainController {
             FXMLLoader fxml = new FXMLLoader(chatload);
             fxml.setController(this);
             root = fxml.load();
+            chatbox.setEditable(false);
+
 //            root= FXMLLoader.load();
             /*
             <ListView fx:id="userList" layoutY="27.0" prefHeight="335.0" prefWidth="200.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="27.0" />
