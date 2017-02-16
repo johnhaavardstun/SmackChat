@@ -136,9 +136,14 @@ public class UserManagement
         return false;
     }
 
-    /** Method which returns all users status
+    /** Method that returns all users status
      *
-     * @return
+     * This method goes through user list and sets all of the users status
+     * to either online, busy or offline.
+     * This method returns a string where the syntax is: status+username+"\n".
+     * The status is equal to 1, 2 or 3 given the status of the user.
+     *
+     * @return contains the statuses of all users.
      */
     public static String getUserStatusList() {
         StringBuffer sb = new StringBuffer();
@@ -165,6 +170,14 @@ public class UserManagement
         return sb.toString();
     }
 
+    /** Method that returns a user
+     *
+     * This method iterates through user list and returns the user
+     * if the given username is correct.
+     *
+     * @param username name of the user you want to get.
+     * @return exists it returns the user; null otherwise.
+     */
     public static User getUser(String username)
     {
         for (User user: userList)
@@ -175,16 +188,34 @@ public class UserManagement
         return null;
     }
 
+    /** Method that returns user list.
+     *
+     * @return list of registered users
+     */
     public static List<User> getUsers()
     {
         return userList;
     }
 
+    /** Method that adds a user status to a listener
+     *
+     * @param listener to a user status
+     */
     public static void addStatusListener(ChangeListener<User.Status> listener)
     {
         listeners.add(listener);
     }
 
+    /** Method that sets a user status
+     *
+     * This method changes the status of the user to either online, busy or offline.
+     *
+     * It iterates through user list and changes the user status
+     * given by the status you set in the status parameter.
+     *
+     * @param username name of the user
+     * @param status that changes the user to
+     */
     public static void setUserStatus(String username, User.Status status)
     {
         for (User user: userList)
@@ -197,6 +228,11 @@ public class UserManagement
         }
     }
 
+    /** //??? SAMME METODE SOM OVENFOR??
+     *
+     * @param user
+     * @param status
+     */
     public static void setUserStatus(User user,  User.Status status) {
         if (user == null) throw new NullPointerException("User can not be null!");
 
