@@ -103,7 +103,7 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                     System.out.println(Thread.currentThread().getName() + " >>> " + user);
                     UserManagement.setUserStatus(user, User.Status.ONLINE);
                         Server.map.put(info[0],this);
-                    sendData(new Packet(Packet.Packetid.LOGINOK, "Congrats!"));
+                    sendData(new Packet(Packet.Packetid.LOGINOK, brukernavn));
                     System.out.println("Log in: OK");
                 }
                 else
@@ -151,8 +151,14 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                 System.out.println(Arrays.toString(connectInfo));
                 System.out.println(Thread.currentThread().getName() + " >>> " + user);
                 Server.map.get(connectInfo[2]).sendData(new Packet(Packet.Packetid.CONNECTIONINFORMATION,
-                                                        connectInfo[0] + ":" + connectInfo[1]));
+                                                        connectInfo[0] + ":" + connectInfo[1]+":"+user.getUsername()));
                 break;
+            case CHANGEBUSY:
+                UserManagement.setUserStatus(user,User.Status.BUSY);
+                break;
+                case CHANGEONLINE:
+                    UserManagement.setUserStatus(user,User.Status.ONLINE);
+                    break;
             case BADREQUEST:
         }
 

@@ -18,9 +18,9 @@ public class ChatSession extends Task<Void> {
     int port;
     ServerSocket ssc;
 
-PrintWriter pwriter;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
+    private String chattingWith;
 
 
     //To contact
@@ -40,7 +40,7 @@ public ChatSession(String ip, int port)
 
 }
 
-//to make yourself connectable bang bing bong
+//to make yourself connectable
     public ChatSession( )
     {
 
@@ -58,13 +58,12 @@ public ChatSession(String ip, int port)
         if(sc == null)
             sc=ssc.accept();
 
-        System.out.println("kommer seg forbi");
-        pwriter= new PrintWriter(sc.getOutputStream());
+        System.out.println("Doing stuff");
         oos = new ObjectOutputStream(sc.getOutputStream());
         ois = new ObjectInputStream((sc.getInputStream()));
         messageIn min= new messageIn(this);
         min.start();
-        System.out.println("ferdig!");
+        System.out.println("Done!");
 
         return  null;
 
@@ -80,19 +79,10 @@ public ChatSession(String ip, int port)
         });
 
     }
-    public void sendMessage(String massage)
-    {
-        System.out.println("Sender melding: " + massage);
-        System.out.println(sc.getLocalAddress() + ":" + sc.getLocalPort() + " --> " + sc.getInetAddress().getHostAddress() + ":" + sc.getPort());
-        pwriter.println(massage);
-//        pwriter.write(massage);
-//        pwriter.flush();
-
-    }
 
 
     public void  sendData(Packet packet) throws IOException {
-        System.out.println("data bir sendt");
+        System.out.println("Sending data");
         oos.writeObject(packet);
         oos.flush();
     }
@@ -110,7 +100,15 @@ public ChatSession(String ip, int port)
          int i=ssc.getLocalPort();
          return i;
      }
+     public void setChatter(String s)
+     {
+         chattingWith=s;
+     }
 
+    public String getChattingWith()
+    {
+        return chattingWith;
+    }
 
 
     private class messageIn extends javafx.concurrent.Service<Void>
@@ -134,28 +132,7 @@ public ChatSession(String ip, int port)
 
                     try {
                         System.out.println(sc.getLocalAddress() + ":" + sc.getLocalPort() + " --> " + sc.getInetAddress().getHostAddress() + ":" + sc.getPort());
-//                        System.out.println(socket.getLocalAddress() + ":" + socket.getLocalPort() + " --> " + socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
 
-                        BufferedReader iin= new BufferedReader(new InputStreamReader(sc.getInputStream()));
-                        String s;
-//                        while (( s = iin.readLine() ) != null) {
-//
-//                            System.out.println("leser meldinger");
-//
-//
-////                            if()
-////                            {
-//                                System.out.print("Mottok chat: ");
-//                                updateMessage("MESSAGE!"+s);
-//                                System.out.println(s);
-////                            }
-//
-//
-//
-//                            System.out.println("melding lest");
-//
-//
-//                        }
 
                         while ((true))
                         {
@@ -163,7 +140,7 @@ public ChatSession(String ip, int port)
                             if((packet=(Packet)ois.readObject())!=null)
                             {
                                 //   System.out.println(packet.getMessage()+"   "+packet.getPacketid());
-                                System.out.println("mottatt: " + packet.getPacketid() + ":" + packet.getMessage());
+                                System.out.println("Recived: " + packet.getPacketid() + ":" + packet.getMessage());
                                 chat.updateMessage(System.currentTimeMillis() + "@CHATMESSAGE!" + packet.getMessage());
 
                             }
@@ -171,7 +148,7 @@ public ChatSession(String ip, int port)
 
                     } catch (IOException e) {
                         chat.updateMessage(System.currentTimeMillis() + "@CHATCLOSED!");
-//                        e.printStackTrace();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

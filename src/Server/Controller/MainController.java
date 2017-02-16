@@ -111,25 +111,4 @@ public class MainController {
     }
 
 
-
-
-
-    private void setItems(ObservableList e)
-    {
-
-        haha.add("balle");
-
-        list.setItems(e);
-
-    }
-
-
-
-
-
-
-
-
-
-
 }

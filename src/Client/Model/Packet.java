@@ -27,7 +27,9 @@ public class Packet implements Serializable{
      CONNECTIONACCEPTED((byte) 310),
      INCOMINGCONNECTION( (byte) 320),
      CONNECTIONINFORMATION( (byte) 350),
-     CHATMESSAGE((byte) 400);
+     CHATMESSAGE((byte) 400),
+     CHANGEBUSY((byte) 480),
+     CHANGEONLINE((byte) 485);
 
      private final byte ID;
 
