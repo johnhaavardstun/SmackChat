@@ -8,8 +8,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
+/** Class that manages the users
+ *
+ * This class contains methods that manages the users status and
+ * which user is registered in SmackChat.
+ *
  * Created by Ali on 27.01.2017.
+ * @version IntelliJ IDEA 2016.3.4
  */
 public class UserManagement
 {
@@ -21,6 +26,12 @@ public class UserManagement
     private static List<User> userList = new ArrayList<>(); //FXCollections.observableArrayList();
     private static List<ChangeListener<User.Status>> listeners = new ArrayList<>();
 
+    /**
+     * This method reads a file which contains registered users.
+     * While reading this file this method puts the registered users in a list.
+     *
+     * @throws IOException when it can not find the given file name.
+     */
     public static void readFile() throws IOException {
 
         BufferedReader rFile = new BufferedReader(new FileReader("./src/Server/users.txt"));
@@ -38,6 +49,12 @@ public class UserManagement
         System.out.println(ArraytoString());
     }
 
+    /** Method that returns registered users.
+     *
+     * Returns a list of all the registered users.
+     *
+     * @return all registered users in a list.
+     */
     public static String ArraytoString()
     {
         String s = "";
@@ -48,7 +65,15 @@ public class UserManagement
         return s;
     }
 
-    // Metode som itererer gjennom userList til å teste om brukernavn eller passord eksisterer fra før av.
+    /** Method which tests whether the username is available.
+     *
+     * This method iterates through the user list to test
+     * whether the username is available.
+     *
+     * @param un username written by the client.
+     * @return true if the username does not exist; false otherwise.
+     * @throws IOException if username is null.
+     */
     public static boolean userExistTest(String un) throws IOException
     {
         if(userList.isEmpty()) { return true; } // Betydning: finnes ingen brukere i filen.
@@ -64,6 +89,15 @@ public class UserManagement
 
     }
 
+    /** Method that adds user to file
+     *
+     * This method registers a new user into user file and
+     * adds the user into the user list.
+     *
+     * @param n name of the user
+     * @param p password of the user
+     * @throws IOException if the given username or password is null.
+     */
     public static void addUserToFile(String n, String p) throws IOException
     {
         BufferedWriter wFile = new BufferedWriter(new FileWriter("./src/Server/users.txt", true));
@@ -80,6 +114,15 @@ public class UserManagement
         //System.out.println(ArraytoString());
     }
 
+    /** Method tests whether the login is correct
+     *
+     * This method iterates through user list and checks whether
+     * the login information given by the client is correct.
+     *
+     * @param username name of the user
+     * @param password password of the user
+     * @return true if username and password is correct; false otherwise.
+     */
     public static Boolean checkIfLoginCorrect(String username, String password)
     {
         for (User user : userList)
@@ -93,6 +136,10 @@ public class UserManagement
         return false;
     }
 
+    /** Method which returns all users status
+     *
+     * @return
+     */
     public static String getUserStatusList() {
         StringBuffer sb = new StringBuffer();
 //int i = 0;
