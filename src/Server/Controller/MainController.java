@@ -18,8 +18,10 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
+/** This class is the main controller of the server.
+ *
  * Created by Ali on 31.01.2017.
+ * @version IntelliJ IDEA 2016.3.4
  */
 public class MainController {
 

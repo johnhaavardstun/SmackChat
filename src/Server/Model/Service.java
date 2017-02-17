@@ -8,8 +8,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
-/**
+/** This class handles and manages the server packets.
+ *
+ *
  * Created by Ali on 02.02.2017.
+ * @version IntelliJ IDEA 2016.3.4
  */
 public class Service<V> extends javafx.concurrent.Service<Void> {
 
