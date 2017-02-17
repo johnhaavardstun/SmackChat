@@ -9,9 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /** Class that manages the users
- *
- * This class contains methods that manages the users status and
- * which user is registered in SmackChat.
+ * <p>This class contains methods that manages the users status and
+ * which user is registered in SmackChat.</p>
  *
  * Created by Ali on 27.01.2017.
  * @version IntelliJ IDEA 2016.3.4
@@ -26,9 +25,10 @@ public class UserManagement
     private static List<User> userList = new ArrayList<>(); //FXCollections.observableArrayList();
     private static List<ChangeListener<User.Status>> listeners = new ArrayList<>();
 
-    /**
-     * This method reads a file which contains registered users.
-     * While reading this file this method puts the registered users in a list.
+    /** <h1>Method that reads a file</h1>
+     *
+     * <p>This method reads a file which contains registered users.
+     * While reading this file this method puts the registered users in a list.</p>
      *
      * @throws IOException when it can not find the given file name.
      */
@@ -51,7 +51,7 @@ public class UserManagement
 
     /** Method that returns registered users.
      *
-     * Returns a list of all the registered users.
+     * <p>Returns a list of all the registered users.</p>
      *
      * @return all registered users in a list.
      */
@@ -67,8 +67,8 @@ public class UserManagement
 
     /** Method which tests whether the username is available.
      *
-     * This method iterates through the user list to test
-     * whether the username is available.
+     * <p>This method iterates through the user list to test
+     * whether the username is available.</p>
      *
      * @param un username written by the client.
      * @return true if the username does not exist; false otherwise.
@@ -91,8 +91,8 @@ public class UserManagement
 
     /** Method that adds user to file
      *
-     * This method registers a new user into user file and
-     * adds the user into the user list.
+     * <p>This method registers a new user into user file and
+     * adds the user into the user list.</p>
      *
      * @param n name of the user
      * @param p password of the user
@@ -116,8 +116,8 @@ public class UserManagement
 
     /** Method tests whether the login is correct
      *
-     * This method iterates through user list and checks whether
-     * the login information given by the client is correct.
+     * <p>This method iterates through user list and checks whether
+     * the login information given by the client is correct.</p>
      *
      * @param username name of the user
      * @param password password of the user
@@ -138,10 +138,10 @@ public class UserManagement
 
     /** Method that returns all users status
      *
-     * This method goes through user list and sets all of the users status
-     * to either online, busy or offline.
-     * This method returns a string where the syntax is: status+username+"\n".
-     * The status is equal to 1, 2 or 3 given the status of the user.
+     * <p>This method goes through user list and sets all of the users status
+     * to either online, busy or offline.</p>
+     * <p>This method returns a string where the syntax is: status+username+"\n".
+     * The status is equal to 1, 2 or 3 given the status of the user.</p>
      *
      * @return contains the statuses of all users.
      */
@@ -172,8 +172,8 @@ public class UserManagement
 
     /** Method that returns a user
      *
-     * This method iterates through user list and returns the user
-     * if the given username is correct.
+     * <p>This method iterates through user list and returns the user
+     * if the given username is correct.</p>
      *
      * @param username name of the user you want to get.
      * @return exists it returns the user; null otherwise.
@@ -208,10 +208,10 @@ public class UserManagement
 
     /** Method that sets a user status
      *
-     * This method changes the status of the user to either online, busy or offline.
+     * <p>This method changes the status of the user to either online, busy or offline.</p>
      *
-     * It iterates through user list and changes the user status
-     * given by the status you set in the status parameter.
+     * <p>It iterates through user list and changes the user status
+     * given by the status you set in the status parameter.</p>
      *
      * @param username name of the user
      * @param status that changes the user to
