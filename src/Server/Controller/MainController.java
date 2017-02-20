@@ -18,7 +18,8 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/** This class is the main controller of the server.
+/** This class is the main controller of the server which launches the server and handles all GUI functionality
+ * to SmackChat.
  *
  * Created by Ali on 31.01.2017.
  * @version IntelliJ IDEA 2016.3.4
@@ -30,9 +31,13 @@ public class MainController {
     @FXML ListView<User> list;
 
 
-    ArrayList<String> haha= new ArrayList<>();
-    ObservableList<String> ali= FXCollections.observableArrayList(haha);
+   /* ArrayList<String> haha= new ArrayList<>();
+    ObservableList<String> ali= FXCollections.observableArrayList(haha);*/
 
+    /** This method initializes the Server. By doing so it displays
+     * and updates all the registered users in SmackChat, where the server
+     * can get information, kick or delete a user.
+     */
     public void initialize()
     {
 

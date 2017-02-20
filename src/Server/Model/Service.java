@@ -8,8 +8,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
-/** This class handles and manages the server packets.
- *
+/** This class creates a (connection)socket and if client is logged in,
+ * it will establish a connection with the client socket.
+ * Then this class will start a task loop where it handles and
+ * manages all the packets received from the client, therefore this class is a
+ * service for the client.
  *
  * Created by Ali on 02.02.2017.
  * @version IntelliJ IDEA 2016.3.4
@@ -17,15 +20,21 @@ import java.util.Arrays;
 public class Service<V> extends javafx.concurrent.Service<Void> {
 
     Socket socket;
-    private String clientinfo;
+    //private String clientinfo;
     Packet packet=null;
     ObjectOutputStream oot;
     ObjectInputStream oon;
     User user;
 
+    /** This constructs a service for the client where socket
+     *  and client information is specified.
+     *
+     * @param s the socket created for the client
+     * @param info the client information
+     */
     public Service(Socket s, String info) {
         this.socket = s;
-        this.clientinfo = info;
+        //this.clientinfo = info;
         System.out.println(">>>>>> Service created: " + s.getInetAddress().getHostAddress() + ":" + s.getPort() + " <<<<<<");
     }
 
@@ -89,7 +98,18 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
         return task;
     }
 
-
+    /** This method handles the packet data sent from the client and
+     * sends the correct packet back to the client.
+     *
+     * <p>Each packet this method receives and sends has a packet id, by
+     * getting the packet id to the packet sent from the client, this
+     * method will use switch case to handle all the different cases
+     * of packet id. Each case, based on the case it will send the
+     * correct result back to the client.</p>
+     *
+     * @param packet the packet this method receives from the client
+     * @throws IOException throws IllegalArgumentException
+     */
     public synchronized void handleData(Packet packet) throws IOException {
 
         System.out.println(packet.getPacketid());
@@ -167,11 +187,17 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
     }
 
-
+    /** This method sends data/packet to the client where the packet
+     * is specified in the parameter.
+     *
+     * @param packet the packet id the client receives
+     * @throws IOException throws IllegalArgumentException
+     */
     public void sendData(Packet packet) throws IOException {
 
         System.out.println("Data/pakke bir sendt til client");
         oot.writeObject(packet);
         oot.flush();
+
     }
 }

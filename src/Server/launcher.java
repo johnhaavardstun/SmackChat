@@ -10,8 +10,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 
-/**
+/** This class launches the server/SmackChat.
+ *
  * Created by Ali on 31.01.2017.
+ * @version IntelliJ IDEA 2016.3.4
  */
 public class launcher extends Application {
 
