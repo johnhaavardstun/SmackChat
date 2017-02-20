@@ -8,8 +8,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
+/** Class that manages the users
+ * <p>This class contains methods that manages the users status and
+ * which user is registered in SmackChat.</p>
+ *
  * Created by Ali on 27.01.2017.
+ * @version IntelliJ IDEA 2016.3.4
  */
 public class UserManagement
 {
@@ -21,6 +25,13 @@ public class UserManagement
     private static List<User> userList = new ArrayList<>(); //FXCollections.observableArrayList();
     private static List<ChangeListener<User.Status>> listeners = new ArrayList<>();
 
+    /** <h1>Method that reads a file</h1>
+     *
+     * <p>This method reads a file which contains registered users.
+     * While reading this file this method puts the registered users in a list.</p>
+     *
+     * @throws IOException when it can not find the given file name.
+     */
     public static void readFile() throws IOException {
 
         BufferedReader rFile = new BufferedReader(new FileReader("./src/Server/users.txt"));
@@ -38,6 +49,12 @@ public class UserManagement
         System.out.println(ArraytoString());
     }
 
+    /** Method that returns registered users.
+     *
+     * <p>Returns a list of all the registered users.</p>
+     *
+     * @return all registered users in a list.
+     */
     public static String ArraytoString()
     {
         String s = "";
@@ -48,7 +65,15 @@ public class UserManagement
         return s;
     }
 
-    // Metode som itererer gjennom userList til å teste om brukernavn eller passord eksisterer fra før av.
+    /** Method which tests whether the username is available.
+     *
+     * <p>This method iterates through the user list to test
+     * whether the username is available.</p>
+     *
+     * @param un username written by the client.
+     * @return true if the username does not exist; false otherwise.
+     * @throws IOException if username is null.
+     */
     public static boolean userExistTest(String un) throws IOException
     {
         if(userList.isEmpty()) { return true; } // Betydning: finnes ingen brukere i filen.
@@ -64,6 +89,15 @@ public class UserManagement
 
     }
 
+    /** Method that adds user to file
+     *
+     * <p>This method registers a new user into user file and
+     * adds the user into the user list.</p>
+     *
+     * @param n name of the user
+     * @param p password of the user
+     * @throws IOException if the given username or password is null.
+     */
     public static void addUserToFile(String n, String p) throws IOException
     {
         BufferedWriter wFile = new BufferedWriter(new FileWriter("./src/Server/users.txt", true));
@@ -77,9 +111,18 @@ public class UserManagement
         userList.add(newUser);
 
         wFile.close();
-        System.out.println(ArraytoString());
+        //System.out.println(ArraytoString());
     }
 
+    /** Method tests whether the login is correct
+     *
+     * <p>This method iterates through user list and checks whether
+     * the login information given by the client is correct.</p>
+     *
+     * @param username name of the user
+     * @param password password of the user
+     * @return true if username and password is correct; false otherwise.
+     */
     public static Boolean checkIfLoginCorrect(String username, String password)
     {
         for (User user : userList)
@@ -93,6 +136,15 @@ public class UserManagement
         return false;
     }
 
+    /** Method that returns all users status
+     *
+     * <p>This method goes through user list and sets all of the users status
+     * to either online, busy or offline.</p>
+     * <p>This method returns a string where the syntax is: status+username+"\n".
+     * The status is equal to 1, 2 or 3 given the status of the user.</p>
+     *
+     * @return contains the statuses of all users.
+     */
     public static String getUserStatusList() {
         StringBuffer sb = new StringBuffer();
 //int i = 0;
@@ -118,6 +170,14 @@ public class UserManagement
         return sb.toString();
     }
 
+    /** Method that returns a user
+     *
+     * <p>This method iterates through user list and returns the user
+     * if the given username is correct.</p>
+     *
+     * @param username name of the user you want to get.
+     * @return exists it returns the user; null otherwise.
+     */
     public static User getUser(String username)
     {
         for (User user: userList)
@@ -128,16 +188,34 @@ public class UserManagement
         return null;
     }
 
+    /** Method that returns user list.
+     *
+     * @return list of registered users
+     */
     public static List<User> getUsers()
     {
         return userList;
     }
 
+    /** Method that adds a user status to a listener
+     *
+     * @param listener to a user status
+     */
     public static void addStatusListener(ChangeListener<User.Status> listener)
     {
         listeners.add(listener);
     }
 
+    /** Method that sets a user status
+     *
+     * <p>This method changes the status of the user to either online, busy or offline.</p>
+     *
+     * <p>It iterates through user list and changes the user status
+     * given by the status you set in the status parameter.</p>
+     *
+     * @param username name of the user
+     * @param status that changes the user to
+     */
     public static void setUserStatus(String username, User.Status status)
     {
         for (User user: userList)
@@ -150,6 +228,11 @@ public class UserManagement
         }
     }
 
+    /** //??? SAMME METODE SOM OVENFOR??
+     *
+     * @param user
+     * @param status
+     */
     public static void setUserStatus(User user,  User.Status status) {
         if (user == null) throw new NullPointerException("User can not be null!");
 

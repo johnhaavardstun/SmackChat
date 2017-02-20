@@ -18,8 +18,10 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
+/** This class is the main controller of the server.
+ *
  * Created by Ali on 31.01.2017.
+ * @version IntelliJ IDEA 2016.3.4
  */
 public class MainController {
 
@@ -39,7 +41,7 @@ public class MainController {
             list.setItems(FXCollections.observableList(UserManagement.getUsers()));
             UserManagement.addStatusListener((observable, oldValue, newValue) -> {
                 System.out.println("user status endret...");
-                System.out.println(newValue);
+                //System.out.println(newValue);
                 Platform.runLater(() -> {
                     System.out.println("kjøres dette noensinne?");
                     list.setItems(null);
@@ -79,7 +81,7 @@ public class MainController {
                         super.updateItem(user, empty);
                         if (user != null)
                         {
-                            System.out.println(user.getUsername() + ":" + user.getStatus());
+                           // System.out.println(user.getUsername() + ":" + user.getStatus());
                             switch (user.getStatus())
                             {
                                 case ONLINE: statusIcon.setImage(onlineImage); break;
@@ -109,27 +111,6 @@ public class MainController {
 
         });
     }
-
-
-
-
-
-    private void setItems(ObservableList e)
-    {
-
-        haha.add("balle");
-
-        list.setItems(e);
-
-    }
-
-
-
-
-
-
-
-
 
 
 }

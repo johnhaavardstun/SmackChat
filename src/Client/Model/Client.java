@@ -21,11 +21,12 @@ import java.util.TimerTask;
  */
 public class Client extends Task<Void> {
 
-    ServerSocket sc;
-    Socket s;
+    private ServerSocket sc;
+    private Socket s;
 
-    ObjectOutputStream oos;
-    Packet p=null;
+    private ObjectOutputStream oos;
+    private Packet p=null;
+    private String clientUser;
 
     private final int SERVERTPORT=8000;
     private final String SERVERIP="127.0.0.1";
@@ -52,13 +53,14 @@ public class Client extends Task<Void> {
                     @Override
                     public void run() {
                         try {
-                            sendData(new Packet(Packet.Packetid.USERLISTREQUEST,"Moren din"));
+                            sendData(new Packet(Packet.Packetid.USERLISTREQUEST,"ListRequest"));
                         } catch (IOException e) {
 
 
                         }
                     }
                 }, 1000, 5000);
+                    clientUser=packet.getMessage();
                 this.updateMessage(System.currentTimeMillis() + "@LOGINOK!");
                 System.out.println("Login - yay!");
                 break;
@@ -76,7 +78,14 @@ public class Client extends Task<Void> {
                 break;
             case USERLIST:
                 this.updateMessage(System.currentTimeMillis() + "@USERLIST!" + packet.getMessage());
-                System.out.println("fikk user liste: " + packet.getMessage());
+                break;
+            case INCOMINGCONNECTION:
+                this.updateMessage(System.currentTimeMillis() +"@CHAT!"+packet.getMessage());
+                System.out.print("Mottok en request.");
+                break;
+            case CONNECTIONINFORMATION:
+                this.updateMessage(System.currentTimeMillis() +"@CONNECTIONINFORMATION!" + packet.getMessage());
+                System.out.println("Mottok kontakt informasjon");
                 break;
             default:
                 this.updateMessage(System.currentTimeMillis() + "@BADREQUEST!");
@@ -84,6 +93,10 @@ public class Client extends Task<Void> {
         }
 
     }
+public String getUser()
+{
+    return  clientUser;
+}
 
     @Override
     protected Void call() throws Exception {
@@ -106,8 +119,10 @@ public class Client extends Task<Void> {
 
     public void start()
     {
+        System.out.println("|>|>|> Client created! <|<|<|");
         Thread t= new Thread(this);
         t.start();
+        System.out.println("Client thread: " + t.getName());
         t.setUncaughtExceptionHandler((thr, e) -> {
             this.setException(e);
         });
@@ -139,24 +154,23 @@ public class Client extends Task<Void> {
 
                         while ((true)) {
 
-                            System.out.println("leser Objekt input stream");
+                    //   System.out.println("leser Objekt input stream");
 
                             if((packet=(Packet)oin.readObject())!=null)
                             {
-                                System.out.println(packet.getMessage()+"   "+packet.getPacketid());
+                             //   System.out.println(packet.getMessage()+"   "+packet.getPacketid());
                                 handleData(packet);
                             }
 
 
 
-                            System.out.println("Objektet er ferdig lest");
+                           // System.out.println("Objektet er ferdig lest");
 
 
                         }
 
                     } catch (IOException e) {
                         this.updateMessage("SERVERLOST");
-//                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -172,6 +186,9 @@ public class Client extends Task<Void> {
             return task;
         }
     }
+
+
+
 }
 
 

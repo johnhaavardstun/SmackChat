@@ -21,8 +21,15 @@ public class Packet implements Serializable{
      REGISTEROK((byte) 40),
      USERNAMETAKEN((byte) 61),
      USERLISTREQUEST((byte) 100),
-     USERLIST((byte) 101);
-
+     USERLIST((byte) 101),
+     CONNECTIONREQUEST((byte) 300),
+     CONNECTIONREFUSED((byte) 305),
+     CONNECTIONACCEPTED((byte) 310),
+     INCOMINGCONNECTION( (byte) 320),
+     CONNECTIONINFORMATION( (byte) 350),
+     CHATMESSAGE((byte) 400),
+     CHANGEBUSY((byte) 480),
+     CHANGEONLINE((byte) 485);
 
      private final byte ID;
 
