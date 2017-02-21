@@ -16,7 +16,13 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
+/** This class creates a client socket and if client is successfully logged into SmackChat,
+ * it will establish a connection with the server.
+ * Then this class will start a task loop where it handles and
+ * manages all the packets received from the server.
+ * When this client has established a connection to a author client in SmackChat, it will start a new thread,
+ * where both clients can chat to each other in SmackChat.
+ *
  * Created by Ali on 30.01.2017.
  */
 public class Client extends Task<Void> {
@@ -32,14 +38,31 @@ public class Client extends Task<Void> {
     private final String SERVERIP="127.0.0.1";
 
 
-
-
+    /**
+     * This method sends data/packet to the server from client where the packet
+     * is specified in the parameter.
+     *
+     * @param packet the packet id the server receives
+     * @throws IOException throws NullPointerException
+     */
     public void  sendData(Packet packet) throws IOException {
         System.out.println("data bir sendt");
         oos.writeObject(packet);
         oos.flush();
     }
 
+    /**This method handles the packet data sent from the server and
+     * sends the correct packet back to the server.
+     *
+     * <p>Each packet this method receives and sends has a packet id, by
+     * getting the packet id to the packet sent from the server, this
+     * method will use switch case to handle all the different cases
+     * of packet id. Each case, based on the case it will send the
+     * correct result back to the server.</p>
+     *
+     * @param packet the packet this method receives from the server
+     * @throws IOException throws NullPointerException
+     */
     public void handleData(Packet packet)
     {
         switch (packet.getPacketid()) {
@@ -93,7 +116,13 @@ public class Client extends Task<Void> {
         }
 
     }
-public String getUser()
+
+    /**
+     * This method returns the user of this client.
+     *
+     * @return the user of this client
+     */
+    public String getUser()
 {
     return  clientUser;
 }
@@ -116,7 +145,12 @@ public String getUser()
         return null;
     }
 
-
+    /**
+     * This method starts a new thread for this client and a other different client
+     * which has accepted the connection chat request from this client. In this thread
+     * both clients can exchange messages to eachother as long as their both online,
+     * otherwise the thread will close.
+     */
     public void start()
     {
         System.out.println("|>|>|> Client created! <|<|<|");
@@ -129,6 +163,11 @@ public String getUser()
 
     }
 
+    /**
+     * When established connection with the server. This class is used to read
+     * the packets received from the server. It will start a task loop and read
+     * the ObjectInputStream received from the socket and handle the data/packet.
+     */
     private class readinfo extends Service<Void>
     {
         Socket socket;

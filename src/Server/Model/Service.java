@@ -108,7 +108,7 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
      * correct result back to the client.</p>
      *
      * @param packet the packet this method receives from the client
-     * @throws IOException throws IllegalArgumentException
+     * @throws IOException throws NullPointerException
      */
     public synchronized void handleData(Packet packet) throws IOException {
 
@@ -187,11 +187,11 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
     }
 
-    /** This method sends data/packet to the client where the packet
+    /** This method sends data/packet to the client from server where the packet
      * is specified in the parameter.
      *
      * @param packet the packet id the client receives
-     * @throws IOException throws IllegalArgumentException
+     * @throws IOException throws NullPointerException
      */
     public void sendData(Packet packet) throws IOException {
 
