@@ -5,6 +5,7 @@ import Server.Model.User;
 /** This class sets the status of a user.
  *
  * Created by JohnHusfloen on 07/02/2017.
+ * @version IntelliJ IDEA 2016.3.4
  */
 public class UserStatus
 {

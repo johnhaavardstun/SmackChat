@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Each packet contains a unique packet id and a string message/data.
  *
  * Created by Ali on 30.01.2017.
+ * @version IntelliJ IDEA 2016.3.4
  */
 public class Packet implements Serializable{
 

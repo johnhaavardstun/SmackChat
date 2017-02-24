@@ -13,7 +13,11 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
 
-
+/**This class launches the client.
+ *
+ * Created by Ali on 31.01.2017.
+ * @version IntelliJ IDEA 2016.3.4
+ */
 public class launcher extends Application {
 
     private final String FXMLFILE="./View/ClientChat.fxml";

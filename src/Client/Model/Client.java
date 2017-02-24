@@ -24,6 +24,7 @@ import java.util.TimerTask;
  * where both clients can chat to each other in SmackChat.
  *
  * Created by Ali on 30.01.2017.
+ * @version IntelliJ IDEA 2016.3.4
  */
 public class Client extends Task<Void> {
 

@@ -27,6 +27,11 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**This class is the main controller of the client which gets the events from the view and deals with user input.
+ *
+ * Created by Ali on 31.01.2017.
+ * @version IntelliJ IDEA 2016.3.4
+ */
 public class MainController {
 
     @FXML TextField user1;
@@ -46,7 +51,9 @@ public class MainController {
     static boolean firstRun = false;
     static boolean isChatting=false;
 
-
+    /** This method initializes this client, by doing so it starts a new thread for this client.
+     *
+     */
     public void initialize()
     {
         if (!firstRun) {
@@ -67,7 +74,19 @@ public class MainController {
         }
     }
 
-
+    /**This method handles the packet data sent from the server and
+     * executes the correct case based on the packet data and message
+     * received from the server.
+     *
+     * <p>Each packet this method receives has a packet id, by
+     * getting the packet id to the packet sent from the server, this
+     * method will use switch case to handle all the different cases
+     * of packet id. Based on the case this method decides which view and
+     * data to display/modify next.</p>
+     *
+     * @param message the message received from the server
+     * @param data the data received form the server
+     */
     private void onServerMessage(String message, String data) {
         switch (message) {
             case "USERNAMETAKEN":
@@ -127,6 +146,11 @@ public class MainController {
         }
     }
 
+    /**This method updates the user list visually specified by data, which contains a string of all
+     * registered users and their current status.
+     *
+     * @param data contains all registered users and their current status
+     */
     private void updateUserList(String data) {
         String[] users = data.split("\n");
         ObservableList<UserStatus> newList = FXCollections.observableList(new ArrayList<>());
@@ -140,6 +164,11 @@ public class MainController {
         userList.setItems(newList);
     }
 
+    /** When a user is successfully logged in, this method switches from the log in scene
+     * to the SmackChat scene. The SmackChat scene is where the user can chat with author
+     * clients that are currently online.
+     *
+     */
     private void switchToLoginScene() {
 
         URL chatload= getClass().getResource("../View/startToChat.fxml");
@@ -218,6 +247,15 @@ public class MainController {
         }
     }
 
+    /** This method displays a message to this client specified by the type of the alert.
+     *
+     * The message is displayed to this client when this client presses a button.
+     *
+     * @param type the type of the alert
+     * @param title the title of the alert
+     * @param text the content text of the alert
+     * @return true if the button clicked is OK; false otherwise
+     */
     public  static Optional<ButtonType> showMessageToClient(AlertType type,String title, String text)
     {
         Alert alert= new Alert(type);
@@ -229,6 +267,11 @@ public class MainController {
 
     }
 
+    /**
+     * This method sends a LOGIN packet to the server, where the packet contains
+     * the username and password specified in the text fields by the client.
+     * This method will display a error message to the client if the server is down.
+     */
     public void login()  {
 
 
@@ -255,13 +298,16 @@ public class MainController {
         }
 
 
-
-
-
-
+    /**
+     * This method sends a REGISTER packet to the server, where the packet contains
+     * the username and password specified in the text fields by the client.
+     * If the username or password specified in the text fields contain special
+     * characters, the client will receive a error message and register packet will
+     * not be send to the server.
+     *
+     * @throws IOException Input exception
+     */
     public void register() throws IOException {
-
-
 
          try {
              String regx = "([a-zA-Z0-9\\.\\_\\-])+";
@@ -290,14 +336,23 @@ public class MainController {
 
     }
 
-
+    /**
+     * This method returns a string which contains the text specified in the text field
+     * by the client.
+     *
+     * @param tx the text field where the text is written into
+     * @return the text specified in the specified text field
+     */
     public String getTextFieldData(TextField tx)
     {
         String s=tx.getText();
         return s;
-
     }
 
+    /**
+     * This method will send a connection request packet to a user displayed in the user list.
+     * The connection request can only be sent to a user which is currently online and not yourself.
+     */
     @FXML
     public void connectionRequest()
     {
@@ -316,6 +371,15 @@ public class MainController {
         }
     }
 
+    /**
+     * This method sends a chat request message to the specified client.
+     * If the specified client answers positive to the chat request, this method will start
+     * a new chat session between you and the specified client by getting the ip and port number
+     * of the specified client.
+     * If the specified client has accepted the chat request, both clients status will be set to busy.
+     *
+     * @param userName the user name of the client you want to chat with
+     */
     public void chatConfirmation(String userName)
     {
         Optional<ButtonType> result = showMessageToClient(AlertType.CONFIRMATION,
@@ -358,6 +422,15 @@ public class MainController {
         }
     }
 
+    /**
+     * This method launches the chat session between yourself and the client you want to chat with. It does this by
+     * specifying the author client name, port and ip number.
+     * This method enables each client to send messages to each other and display/updates the messages on the chat box.
+     *
+     * @param ip the ip number of the client you are chatting with
+     * @param port the port number of the client you are chatting with
+     * @param name the user name of the client you are chatting with
+     */
     public void startChatConnect(String ip, int port, String name)
     {
         cSession = new ChatSession(ip, port);
@@ -381,7 +454,11 @@ public class MainController {
     }
 
 
-
+    /**
+     * When there is created a chat session between you and author client,
+     * this method sends and displays the message, you have specified in the text field, into the chat box.
+     *
+     */
   public void getSendMessage() {
 
       if (isChatting) {
@@ -403,6 +480,11 @@ public class MainController {
       }
   }
 
+    /**
+     * This method displays the incoming chat message, you have received from the author client, into
+     * the chat box.
+     * @param message
+     */
     public void incomingChatMessage(String message)
     {
         chatbox.appendText(cSession.getChattingWith()+": " + message + "\n");

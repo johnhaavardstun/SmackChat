@@ -40,6 +40,8 @@ public class Server extends Task<Void> {
 
     /** This method starts a new thread for a client which is successfully
      * logged into the program.
+     * This method enables multiple clients to be
+     * logged into one server.
      */
     public void start()
     {
