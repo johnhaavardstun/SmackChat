@@ -5,7 +5,8 @@ import Client.Model.ChatSession;
 import Client.Model.Client;
 import Client.Model.Packet;
 import Client.Model.UserStatus;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -27,31 +28,35 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**This class is the main controller of the client which gets the events from the view and deals with user input.
+/**
+ * This class is the main controller of the client which gets the events from the view and deals with user input.
  *
- * Created by Ali on 31.01.2017.
- * @version IntelliJ IDEA 2016.3.4
  */
 public class MainController {
 
-    @FXML TextField user1;
-    @FXML PasswordField pass1;
-    @FXML Button butteng;
-    @FXML Button Register;
-    @FXML Button connect;
-    @FXML Button send;
-    @FXML ListView<UserStatus> userList;
-    @FXML TextArea chatbox;
-    @FXML TextField textField;
-    @FXML Label userinfo;
+    // in ClientChat.fxml
+    @FXML private TextField username;
+    @FXML private PasswordField password;
+    @FXML private Button login;
+    @FXML private Button register;
+
+    // in startToChat.fxml
+    @FXML private Button connect;
+    @FXML private Button send;
+    @FXML private Button disconnect;
+    @FXML private ListView<UserStatus> userList;
+    @FXML private TextArea chatbox;
+    @FXML private TextField textField;
+    @FXML private Label userinfo;
 
     private    String  superdupercode="§§§¤";
     private Client c;
     private ChatSession cSession;
-    static boolean firstRun = false;
-    static boolean isChatting=false;
+    private boolean firstRun = false;
+    private SimpleBooleanProperty isChatting = new SimpleBooleanProperty(false);
 
-    /** This method initializes this client, by doing so it starts a new thread for this client.
+    /**
+     * This method initializes this client, by doing so it starts a new thread for this client.
      *
      */
     public void initialize()
@@ -71,10 +76,20 @@ public class MainController {
                 showMessageToClient(AlertType.ERROR, "Server error!", newValue.getMessage());
                 System.exit(876);
             });
+
+            login.disableProperty().bind(Bindings.and(
+                    Bindings.length(username.textProperty()).greaterThan(1),
+                    Bindings.length(password.textProperty()).greaterThan(1)
+                ).not());
+            register.disableProperty().bind(Bindings.and(
+                    Bindings.length(username.textProperty()).greaterThan(1),
+                    Bindings.length(password.textProperty()).greaterThan(1)
+            ).not());
         }
     }
 
-    /**This method handles the packet data sent from the server and
+    /**
+     * This method handles the packet data sent from the server and
      * executes the correct case based on the packet data and message
      * received from the server.
      *
@@ -87,21 +102,23 @@ public class MainController {
      * @param message the message received from the server
      * @param data the data received form the server
      */
-    private void onServerMessage(String message, String data) {
-        switch (message) {
-            case "USERNAMETAKEN":
+    private void onServerMessage(String message, String data)
+    {
+        switch (message)
+        {
+            case "USERNAME_TAKEN":
                 showMessageToClient(AlertType.ERROR, "Username taken!",
                         "Please choose another username.");
                 break;
-            case "LOGINOK":
+            case "LOGIN_OK":
                 System.out.println("login ok!");
                 switchToLoginScene();
                 break;
-            case "REGISTEROK":
+            case "REGISTER_OK":
                 showMessageToClient(AlertType.CONFIRMATION, "Successfully registered!",
                         "Welcome to SmackChat - enjoy your stay!");
                 break;
-            case "WRONGLOGIN":
+            case "WRONG_LOGIN":
                 showMessageToClient(AlertType.ERROR, "Login failed!",
                         "The username and/or password is incorrect, scrub!");
                 break;
@@ -109,7 +126,7 @@ public class MainController {
                 showMessageToClient(AlertType.ERROR, "Server lost!",
                         "The connection to the server was lost, please try again later.");
                 break;
-            case "USERLIST":
+            case "USER_LIST":
                 updateUserList(data);
 //                System.out.println(data);
                 break;
@@ -117,41 +134,45 @@ public class MainController {
                 System.out.print("Mottok en chat reuqest");
                 chatConfirmation(data);
                 break;
-            case "CHATMESSAGE":
+            case "CHAT_MESSAGE":
                 System.out.println("Har motatt chat melding!");
                 incomingChatMessage(data);
                 break;
-            case "BADREQUEST":
+            case "BAD_REQUEST":
                 System.out.println("skjedde en feil");
                 break;
-            case "CONNECTIONINFORMATION":
+            case "CHAT_CONNECTION_INFORMATION":
                 String[] cinfo = data.split(":");
                 System.out.println(Arrays.toString(cinfo));
                 startChatConnect(cinfo[0], Integer.parseInt(cinfo[1]),cinfo[2]);
                 System.out.println("Mottok kontakt informasjon!");
-    break;
-            case "MESSAGE":
-
-                chatbox.appendText("Chatter med:"+data+'\n');
                 break;
-                //TODO  Lukk trådene ordentlig! og en disconnect knapp!
-            case "CHATCLOSED":
-                try {
-                    chatbox.appendText("System: Partner has disconnected");
-                    c.sendData(new Packet(Packet.Packetid.CHANGEONLINE,"Changing status to online"));
-                } catch (IOException e) {
+            case "CHAT_CLOSED":
+                try
+                {
+                    isChatting.set(false);
+                    cSession = null;
+                    textField.setText(null);
+                    chatbox.appendText("System: You have been disconnected from the chat.\n");
+                    c.sendData(new Packet(Packet.PacketId.CHANGE_STATUS_ONLINE,"Changing status to online"));
+                }
+                catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
         }
     }
 
-    /**This method updates the user list visually specified by data, which contains a string of all
+    /**
+     * This method updates the user list visually specified by data, which contains a string of all
      * registered users and their current status.
      *
      * @param data contains all registered users and their current status
      */
-    private void updateUserList(String data) {
+    private void updateUserList(String data)
+    {
+        UserStatus selectedUser = userList.getSelectionModel().getSelectedItem();
+
         String[] users = data.split("\n");
         ObservableList<UserStatus> newList = FXCollections.observableList(new ArrayList<>());
         for (String user: users)
@@ -162,16 +183,30 @@ public class MainController {
             newList.add(new UserStatus(user.substring(1), status));
         }
         userList.setItems(newList);
+
+        if (selectedUser != null)
+        {
+            for (UserStatus userStatus : newList)
+            {
+                if (userStatus.getUserName().equals(selectedUser.getUserName()))
+                {
+                    userList.getSelectionModel().select(userStatus);
+                    break;
+                }
+            }
+        }
     }
 
-    /** When a user is successfully logged in, this method switches from the log in scene
+    /**
+     * When a user is successfully logged in, this method switches from the log in scene
      * to the SmackChat scene. The SmackChat scene is where the user can chat with author
      * clients that are currently online.
      *
      */
-    private void switchToLoginScene() {
+    private void switchToLoginScene()
+    {
 
-        URL chatload= getClass().getResource("../View/startToChat.fxml");
+        URL chatload = getClass().getResource("../View/startToChat.fxml");
         Parent root = null;
         try {
             FXMLLoader fxml = new FXMLLoader(chatload);
@@ -187,12 +222,19 @@ public class MainController {
             System.exit(9876543);
         }
 
-        ((Stage) butteng.getScene().getWindow()).setScene(new Scene(root, 600, 400));
+        ((Stage) login.getScene().getWindow()).setScene(new Scene(root, 600, 400));
 
-        if (userList == null)
-            userList = (ListView) root.lookup("#userList");
+        send.setDefaultButton(true);
+        send.disableProperty().bind(isChatting.not());
+        textField.disableProperty().bind(isChatting.not());
+        connect.disableProperty().bind(isChatting);
+        disconnect.disableProperty().bind(isChatting.not());
+//
+//        if (userList == null)
+//            userList = (ListView) root.lookup("#userList");
 
-        userList.setCellFactory(new Callback<ListView<UserStatus>, ListCell<UserStatus>>() {
+        userList.setCellFactory(new Callback<ListView<UserStatus>, ListCell<UserStatus>>()
+        {
 
             final Image onlineImage = new Image(getClass().getResourceAsStream("../View/online.png"));
             final Image offlineImage = new Image(getClass().getResourceAsStream("../View/offline.png"));
@@ -211,7 +253,7 @@ public class MainController {
                     }
 
                     @Override
-                    protected void updateItem(UserStatus userStatus,  boolean empty)
+                    protected void updateItem(UserStatus userStatus, boolean empty)
                     {
                         super.updateItem(userStatus, empty);
                         if (userStatus != null)
@@ -240,14 +282,15 @@ public class MainController {
 
         try
         {
-            c.sendData(new Packet(Packet.Packetid.USERLISTREQUEST, null));
+            c.sendData(new Packet(Packet.PacketId.USER_LIST_REQUEST, null));
         }
         catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /** This method displays a message to this client specified by the type of the alert.
+    /**
+     * This method displays a message to this client specified by the type of the alert.
      *
      * The message is displayed to this client when this client presses a button.
      *
@@ -256,7 +299,7 @@ public class MainController {
      * @param text the content text of the alert
      * @return true if the button clicked is OK; false otherwise
      */
-    public  static Optional<ButtonType> showMessageToClient(AlertType type,String title, String text)
+    public static Optional<ButtonType> showMessageToClient(AlertType type, String title, String text)
     {
         Alert alert= new Alert(type);
         alert.setTitle(title);
@@ -272,30 +315,26 @@ public class MainController {
      * the username and password specified in the text fields by the client.
      * This method will display a error message to the client if the server is down.
      */
-    public void login()  {
-
-
-
-        try {
-
-
-
+    public void login()
+    {
+        try
+        {
             System.out.println("lag pakket");
 
-            String sd=getTextFieldData(user1)+superdupercode+getTextFieldData(pass1);
+            String sd=getTextFieldData(username)+superdupercode+getTextFieldData(password);
             System.out.println(sd);
 
-            Packet pa= new Packet(Packet.Packetid.LOGIN,sd);
+            Packet pa= new Packet(Packet.PacketId.LOGIN,sd);
 
             c.sendData(pa);
             System.out.println(Thread.currentThread().getName() + " >>> " + c);
-
-
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             showMessageToClient(AlertType.ERROR,"Connection Refused","Server is down please try again later!");
             e.printStackTrace();
         }
-        }
+    }
 
 
     /**
@@ -313,15 +352,15 @@ public class MainController {
              String regx = "([a-zA-Z0-9\\.\\_\\-])+";
              Pattern pattern=Pattern.compile(regx);
 
-             String username=getTextFieldData(user1);
-             String password=getTextFieldData(pass1);
+             String username=getTextFieldData(this.username);
+             String password=getTextFieldData(this.password);
              Matcher user= pattern.matcher(username);
              Matcher pass= pattern.matcher(password);
 
              if(user.matches() && pass.matches()) {
                  String s = username + superdupercode + password;
 
-                 Packet p = new Packet(Packet.Packetid.REGISTER, s);
+                 Packet p = new Packet(Packet.PacketId.REGISTER, s);
                  c.sendData(p);
              }
            else{
@@ -360,10 +399,9 @@ public class MainController {
         String s = statusU.getUserName();
         if(statusU != null && statusU.getStatus() == UserStatus.Status.ONLINE &&(!s.equals(c.getUser()))) {
 
-
             System.out.println(s);
                 try {
-                    c.sendData(new Packet(Packet.Packetid.CONNECTIONREQUEST, s));
+                    c.sendData(new Packet(Packet.PacketId.CHAT_CONNECTION_REQUEST_SERVER, s));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -385,38 +423,39 @@ public class MainController {
         Optional<ButtonType> result = showMessageToClient(AlertType.CONFIRMATION,
                 "Accept?","Chat request from " + userName + "!");
 
-        if(result.get() == ButtonType.OK)
+        if(result.isPresent() && result.get() == ButtonType.OK)
         {
             try {
-
                 cSession = new ChatSession();
                 cSession.start();
                 cSession.messageProperty().addListener(((observable, oldValue, newValue) -> {
                     onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
                             newValue.substring(1 + newValue.indexOf('!')));
                 }));
-                cSession.messageProperty().addListener((observable, oldValue, newValue) -> System.out.println("P2P Message: " + newValue));
-                System.out.println(Thread.currentThread().getName() + " >>> " + c);
+
+                // TODO: fix this shit
                 String connectionInfo = "127.0.0.1" + ":" + cSession.getServerPort() + ":" + userName;
                 System.out.println(connectionInfo);
                 cSession.setChatter(userName);
-                c.sendData(new Packet(Packet.Packetid.CONNECTIONACCEPTED, connectionInfo));
+                c.sendData(new Packet(Packet.PacketId.CHAT_CONNECTION_ACCEPTED, connectionInfo));
 
-                    c.sendData(new Packet(Packet.Packetid.CHANGEBUSY,"Changing status to busy!"));
-                    isChatting=true;
-                chatbox.appendText("System: You are now chatting with: "+cSession.getChattingWith()+'\n');
-
-
-            } catch (IOException e) {
+                c.sendData(new Packet(Packet.PacketId.CHANGE_STATUS_BUSY,"Changing status to busy!"));
+                isChatting.set(true);
+                chatbox.appendText("System: You are now chatting with: " + cSession.getChattingWith() + '\n');
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
         }
-
         else
         {
-            try {
-                c.sendData(new Packet(Packet.Packetid.CONNECTIONREFUSED, userName));
-            } catch (IOException e) {
+            try
+            {
+                c.sendData(new Packet(Packet.PacketId.CHAT_CONNECTION_REFUSED, userName));
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
         }
@@ -439,13 +478,12 @@ public class MainController {
             onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
                     newValue.substring(1 + newValue.indexOf('!')));
         }));
-        cSession.messageProperty().addListener((observable, oldValue, newValue) -> System.out.println("P2P Message: " + newValue));
-        System.out.println(Thread.currentThread().getName() + " >>> " + c);
+
         cSession.setChatter(name);
-        chatbox.appendText("System: You are now chatting with: "+cSession.getChattingWith()+'\n');
-        isChatting=true;
+        chatbox.appendText("System: You are now chatting with: " + cSession.getChattingWith() + '\n');
+        isChatting.set(true);
         try {
-            c.sendData(new Packet(Packet.Packetid.CHANGEBUSY,"Changing status to busy!"));
+            c.sendData(new Packet(Packet.PacketId.CHANGE_STATUS_BUSY,"Changing status to busy!"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -455,39 +493,56 @@ public class MainController {
 
 
     /**
-     * When there is created a chat session between you and author client,
+     * When there is created a chat session between you and another client,
      * this method sends and displays the message, you have specified in the text field, into the chat box.
      *
      */
-  public void getSendMessage() {
-
-      if (isChatting) {
-          String s = textField.getText();
-          if (!(s.equals(""))){
-              chatbox.appendText("Meg: " + s + '\n');
-          textField.clear();
-          System.out.println(Thread.currentThread().getName() + " >>> " + c);
-          try {
-              cSession.sendData(new Packet(Packet.Packetid.CHATMESSAGE, s));
-          } catch (IOException e) {
-              showMessageToClient(AlertType.ERROR, "Error!", "Unexpected error sending message!");
-          }
-      }
-      }
-      else{
-          textField.clear();
-          chatbox.appendText("System: You are not chatting with anyone!"+'\n');
-      }
-  }
+    public void getSendMessage() {
+        if (isChatting.get())
+        {
+            String s = textField.getText();
+            if (!(s.trim().equals("")))
+            {
+                chatbox.appendText("Me: " + s + '\n');
+                textField.clear();
+                try
+                {
+                    cSession.sendData(new Packet(Packet.PacketId.CHAT_MESSAGE, s));
+                }
+                catch (IOException e)
+                {
+                    showMessageToClient(AlertType.ERROR, "Error!", "Unexpected error sending message!");
+                }
+            }
+        }
+        else
+        {
+            textField.clear();
+            chatbox.appendText("System: You are not chatting with anyone!"+'\n');
+        }
+    }
 
     /**
-     * This method displays the incoming chat message, you have received from the author client, into
+     * This method displays the incoming chat message, you have received from the other client, into
      * the chat box.
      * @param message
      */
     public void incomingChatMessage(String message)
     {
-        chatbox.appendText(cSession.getChattingWith()+": " + message + "\n");
+        chatbox.appendText(cSession.getChattingWith() + ": " + message + "\n");
+    }
+
+
+    /**
+     * This method disconnects from the current chat session, so that you can chat with someone else.
+     */
+    @FXML
+    public void disconnectFromChat()
+    {
+        if (isChatting.get())
+        {
+            cSession.endChat();
+        }
     }
 
 }

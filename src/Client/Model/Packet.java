@@ -7,59 +7,59 @@ import java.io.Serializable;
  * This class contains all the packets exchanged between client and server.
  * Each packet contains a unique packet id and a string message/data.
  *
- * Created by Ali on 30.01.2017.
- * @version IntelliJ IDEA 2016.3.4
  */
-public class Packet implements Serializable{
-
+public class Packet implements Serializable
+{
 
     static final long serialVersionUID = 69L;
 
     /**
      * All predefined packet id a packet can have.
      */
-    public enum Packetid
- {
-     LOGIN(((byte)50)),
-     REGISTER((byte)60),
-     WRONGLOGIN((byte)55),
-     BADREQUEST((byte)90),
-     LOGINOK((byte) 58),
-     REGISTEROK((byte) 40),
-     USERNAMETAKEN((byte) 61),
-     USERLISTREQUEST((byte) 100),
-     USERLIST((byte) 101),
-     CONNECTIONREQUEST((byte) 300),
-     CONNECTIONREFUSED((byte) 305),
-     CONNECTIONACCEPTED((byte) 310),
-     INCOMINGCONNECTION( (byte) 320),
-     CONNECTIONINFORMATION( (byte) 350),
-     CHATMESSAGE((byte) 400),
-     CHANGEBUSY((byte) 480),
-     CHANGEONLINE((byte) 485);
+    public enum PacketId
+    {
+        LOGIN                           ((byte) 10),
+        LOGIN_OK                        ((byte) 11),
+        WRONG_LOGIN                     ((byte) 19),
+        REGISTER                        ((byte) 20),
+        REGISTER_OK                     ((byte) 21),
+        USERNAME_TAKEN                  ((byte) 29),
+        USER_LIST_REQUEST               ((byte) 30),
+        USER_LIST                       ((byte) 31),
+        CHAT_CONNECTION_REQUEST_SERVER  ((byte) 40),
+        CHAT_CONNECTION_REQUEST_CLIENT  ((byte) 41),
+        CHAT_CONNECTION_ACCEPTED        ((byte) 42),
+        CHAT_CONNECTION_INFORMATION     ((byte) 43),
+        CHAT_CONNECTION_REFUSED         ((byte) 49),
+        CHAT_MESSAGE                    ((byte) 50),
+        CHAT_STOP                       ((byte) 58),
+        CHAT_STOP_ACKNOWLEDGED          ((byte) 59),
+        CHANGE_STATUS_BUSY              ((byte) 60),
+        CHANGE_STATUS_ONLINE            ((byte) 61),
+        BAD_REQUEST                     ((byte) 127);
 
-     private final byte ID;
+        private final byte id;
 
-     private Packetid(byte id)
-     {
-         this.ID=id;
-     }
+        PacketId(byte id)
+        {
+            this.id = id;
+        }
 
- }
+    }
 
-    private Packetid packetid;
+    private PacketId packetId;
     private String message;
 
     /**
      * This constructs a packet by specifying packet id and message/data.
      *
-     * @param packetid the packet id of this packet
+     * @param packetId the packet id of this packet
      * @param message the message of this packet
      */
-    public Packet(Packetid packetid,String message)
+    public Packet(PacketId packetId, String message)
     {
-        this.packetid=packetid;
-        this.message=message;
+        this.packetId = packetId;
+        this.message  = message;
 
     }
 
@@ -68,8 +68,8 @@ public class Packet implements Serializable{
      *
      * @return the packet id of this packet
      */
-    public Packetid getPacketid() {
-        return packetid;
+    public PacketId getPacketId() {
+        return packetId;
     }
 
     /**
@@ -79,5 +79,11 @@ public class Packet implements Serializable{
      */
     public String getMessage() {
         return message;
+    }
+
+    @Override
+    public String toString()
+    {
+        return getPacketId() + ": " + getMessage();
     }
 }

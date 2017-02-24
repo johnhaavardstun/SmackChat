@@ -1,25 +1,21 @@
 package Client.Model;
 
-import Server.Model.Service;
 import javafx.concurrent.Task;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  * This class establishes a peer-to-peer connection between two clients. If connection is established, this class
  * manages the chat session between the two clients. Once the two clients are connected to each other, a new thread
- * will start, where the two clients can send each other messages through packets.
- * Created by Ali on 13.02.2017.
+ * will start to listen for messages from the other client through packets.
  */
 public class ChatSession extends Task<Void> {
 
-    Socket sc;
-    String ip;
-    int port;
-    ServerSocket ssc;
+    private Socket sc;
+    private String ip;
+    private int port;
+    private ServerSocket ssc;
 
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
@@ -64,7 +60,6 @@ public class ChatSession extends Task<Void> {
 
     }
 
-
     @Override
     protected Void call() throws Exception {
         if (sc == null)
@@ -73,8 +68,8 @@ public class ChatSession extends Task<Void> {
         System.out.println("Doing stuff");
         oos = new ObjectOutputStream(sc.getOutputStream());
         ois = new ObjectInputStream((sc.getInputStream()));
-        messageIn min = new messageIn(this);
-        min.start();
+        ChatListener chatListener = new ChatListener(this);
+        chatListener.start();
         System.out.println("Done!");
 
         return null;
@@ -100,9 +95,12 @@ public class ChatSession extends Task<Void> {
      * @throws IOException throws NullPointerException
      */
     public void sendData(Packet packet) throws IOException {
-        System.out.println("Sending data");
-        oos.writeObject(packet);
-        oos.flush();
+        if (!sc.isOutputShutdown())
+        {
+            System.out.println("Sending data");
+            oos.writeObject(packet);
+            oos.flush();
+        }
     }
 
     /** This method gets the server ip from this client.
@@ -127,7 +125,7 @@ public class ChatSession extends Task<Void> {
     /** This method sets the user name of who you are chatting with a specified user name.
      *
      * <p>This method is used to set the chat window to be set to this client
-     * and the author client you are having a chat session with.</p>
+     * and the other client you are having a chat session with.</p>
      *
      * @param s the username of who you are chatting with
      */
@@ -143,17 +141,25 @@ public class ChatSession extends Task<Void> {
         return chattingWith;
     }
 
-    /** This class manages the chat session between this client and the author client
+    public void endChat() {
+        try {
+            sendData(new Packet(Packet.PacketId.CHAT_STOP, null));
+            sc.shutdownOutput();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** This class manages the chat session between this client and the other client
      * you are chatting with.
      * <p>It starts a task loop where it reads the packet message received from the author client.
-     * The chat will then be updated with the chat message received from the author client.</p>
+     * The chat will then be updated with the chat message received from the other client.</p>
      *
      */
-    private class messageIn extends javafx.concurrent.Service<Void> {
-        ChatSession chat;
+    private class ChatListener extends javafx.concurrent.Service<Void> {
 
-
-        private messageIn(ChatSession chatSession) {
+        private ChatSession chat;
+        private ChatListener(ChatSession chatSession) {
             this.chat = chatSession;
         }
 
@@ -161,47 +167,51 @@ public class ChatSession extends Task<Void> {
         protected Task<Void> createTask() {
             Task<Void> task = new Task<Void>() {
 
-
                 @Override
                 protected Void call() throws Exception {
-
-
                     try {
-                        System.out.println(sc.getLocalAddress() + ":" + sc.getLocalPort() + " --> " + sc.getInetAddress().getHostAddress() + ":" + sc.getPort());
+                        System.out.println(sc.getLocalAddress().getHostAddress() + ":" + sc.getLocalPort() + " --> " + sc.getInetAddress().getHostAddress() + ":" + sc.getPort());
 
-
-                        while ((true)) {
+                        theCycle: while (true) {
+                            System.out.println("reading packet");
                             Packet packet;
                             if ((packet = (Packet) ois.readObject()) != null) {
-                                //   System.out.println(packet.getMessage()+"   "+packet.getPacketid());
-                                System.out.println("Recived: " + packet.getPacketid() + ":" + packet.getMessage());
-                                chat.updateMessage(System.currentTimeMillis() + "@CHATMESSAGE!" + packet.getMessage());
-
+                                switch (packet.getPacketId())
+                                {
+                                    case CHAT_MESSAGE:
+                                        chat.updateMessage(System.currentTimeMillis() + "@CHAT_MESSAGE!" + packet.getMessage());
+                                        break;
+                                    case CHAT_STOP:
+                                        sendData(new Packet(Packet.PacketId.CHAT_STOP_ACKNOWLEDGED, null));
+                                    case CHAT_STOP_ACKNOWLEDGED:
+                                        sc.close();
+                                        break theCycle;
+                                    default:
+                                        System.err.println("Received unexpected packet type: " + packet);
+                                }
                             }
                         }
 
-                    } catch (IOException e) {
-                        chat.updateMessage(System.currentTimeMillis() + "@CHATCLOSED!");
-
-                    } catch (Exception e) {
+                        chat.updateMessage(System.currentTimeMillis() + "@CHAT_CLOSED!");
+                    }
+                    catch (IOException e)
+                    {
+                        chat.updateMessage(System.currentTimeMillis() + "@CHAT_CLOSED!");
+                    }
+                    catch (Exception e)
+                    {
+                        chat.setException(e);
                         e.printStackTrace();
                     }
 
                     return null;
-
-                }
+                } // call
 
             };
 
-
             return task;
         }
-    }
 
+    } // class ChatListener
 
 }
-
-
-
-
-

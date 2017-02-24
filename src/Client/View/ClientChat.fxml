@@ -37,10 +37,10 @@
             </MenuBar>
             <Text layoutX="164.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username:" />
             <Text layoutX="164.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password:" />
-            <TextField fx:id="user1" layoutX="247.0" layoutY="175.0" prefHeight="25.0" prefWidth="126.0" />
-            <PasswordField fx:id="pass1" layoutX="247.0" layoutY="215.0" prefHeight="25.0" prefWidth="126.0" />
-            <Button fx:id="butteng" layoutX="157.0" layoutY="260.0" mnemonicParsing="false" onAction="#login" prefHeight="25.0" prefWidth="126.0" text="Log in" />
-            <Button fx:id="Register" layoutX="313.0" layoutY="260.0" mnemonicParsing="false" onAction="#register" prefHeight="25.0" prefWidth="126.0" text="Register" />
+            <TextField fx:id="username" layoutX="247.0" layoutY="175.0" prefHeight="25.0" prefWidth="126.0" />
+            <PasswordField fx:id="password" layoutX="247.0" layoutY="215.0" prefHeight="25.0" prefWidth="126.0" />
+            <Button fx:id="login" defaultButton="true" layoutX="157.0" layoutY="260.0" mnemonicParsing="false" onAction="#login" prefHeight="25.0" prefWidth="126.0" text="Log in" />
+            <Button fx:id="register" layoutX="313.0" layoutY="260.0" mnemonicParsing="false" onAction="#register" prefHeight="25.0" prefWidth="126.0" text="Register" />
             <Text layoutX="14.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Copyrighted to Ali " />
             <ImageView fitHeight="123.0" fitWidth="128.0" layoutX="236.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
                <image>

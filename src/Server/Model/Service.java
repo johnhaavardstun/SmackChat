@@ -8,14 +8,13 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
-/** This class creates a (connection)socket and if client is logged in,
+/**
+ * This class creates a (connection)socket and if client is logged in,
  * it will establish a connection with the client socket.
  * Then this class will start a task loop where it handles and
  * manages all the packets received from the client, therefore this class is a
  * service for the client.
  *
- * Created by Ali on 02.02.2017.
- * @version IntelliJ IDEA 2016.3.4
  */
 public class Service<V> extends javafx.concurrent.Service<Void> {
 
@@ -26,8 +25,9 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
     ObjectInputStream oon;
     User user;
 
-    /** This constructs a service for the client where socket
-     *  and client information is specified.
+    /**
+     * This constructs a service for the client where socket
+     * and client information is specified.
      *
      * @param s the socket created for the client
      * @param info the client information
@@ -65,7 +65,7 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
                     if((packet=(Packet)oon.readObject())!=null)
                     {
-                        System.out.println(packet.getMessage()+"   "+packet.getPacketid());
+                        System.out.println(packet.getMessage()+"   "+packet.getPacketId());
                         handleData(packet);
                     }
 
@@ -112,10 +112,10 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
      */
     public synchronized void handleData(Packet packet) throws IOException {
 
-        System.out.println(packet.getPacketid());
+        System.out.println(packet.getPacketId());
         String data=packet.getMessage();
         String brukernavn="";
-        switch (packet.getPacketid()){
+        switch (packet.getPacketId()){
             case LOGIN:
                 String[] info=data.split("§§§¤");
                 if(UserManagement.checkIfLoginCorrect(info[0],info[1]))
@@ -126,12 +126,12 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                     System.out.println(Thread.currentThread().getName() + " >>> " + user);
                     UserManagement.setUserStatus(user, User.Status.ONLINE);
                         Server.map.put(info[0],this);
-                    sendData(new Packet(Packet.Packetid.LOGINOK, brukernavn));
+                    sendData(new Packet(Packet.PacketId.LOGIN_OK, brukernavn));
                     System.out.println("Log in: OK");
                 }
                 else
                 {
-                    sendData( new Packet(Packet.Packetid.WRONGLOGIN,"Pakke Mottatt"));
+                    sendData( new Packet(Packet.PacketId.WRONG_LOGIN,"Pakke Mottatt"));
                     System.out.println("Auth fail - possible break-in attemp?!?!?!?!?!?!11");
                     System.out.println(info[0] + ":" + info[1]);
                 }
@@ -145,11 +145,11 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                     {
                         UserManagement.addUserToFile(info[0],info[1]);
                         System.out.println("Bruker er registret");
-                        sendData(new Packet(Packet.Packetid.REGISTEROK, "Welcome!"));
+                        sendData(new Packet(Packet.PacketId.REGISTER_OK, "Welcome!"));
                     }
                     else
                     {
-                        sendData(new Packet(Packet.Packetid.USERNAMETAKEN, "Have some originality"));
+                        sendData(new Packet(Packet.PacketId.USERNAME_TAKEN, "Have some originality"));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -157,37 +157,38 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
                 break;
 
-            case USERLISTREQUEST:
+            case USER_LIST_REQUEST:
                 String users = UserManagement.getUserStatusList();
                 //System.out.println(users);
-                sendData(new Packet(Packet.Packetid.USERLIST, users));
+                sendData(new Packet(Packet.PacketId.USER_LIST, users));
                 System.out.println(Thread.currentThread().getName() + " >>> " + user);
                 break;
 
-            case CONNECTIONREQUEST:
+            case CHAT_CONNECTION_REQUEST_SERVER:
                 System.out.println("Conn req: " + data + " ønsker å chatte med " + "..."+data );
                 System.out.println(Thread.currentThread().getName() + " >>> " + user);
-                Server.map.get(data).sendData(new Packet(Packet.Packetid.INCOMINGCONNECTION, user.getUsername()));
+                Server.map.get(data).sendData(new Packet(Packet.PacketId.CHAT_CONNECTION_REQUEST_CLIENT, user.getUsername()));
             break;
-            case CONNECTIONACCEPTED:
+            case CHAT_CONNECTION_ACCEPTED:
                 String[] connectInfo = data.split(":"); // [0] = ip, [1] = port, [2] = userName
                 System.out.println(Arrays.toString(connectInfo));
                 System.out.println(Thread.currentThread().getName() + " >>> " + user);
-                Server.map.get(connectInfo[2]).sendData(new Packet(Packet.Packetid.CONNECTIONINFORMATION,
+                Server.map.get(connectInfo[2]).sendData(new Packet(Packet.PacketId.CHAT_CONNECTION_INFORMATION,
                                                         connectInfo[0] + ":" + connectInfo[1]+":"+user.getUsername()));
                 break;
-            case CHANGEBUSY:
+            case CHANGE_STATUS_BUSY:
                 UserManagement.setUserStatus(user,User.Status.BUSY);
                 break;
-                case CHANGEONLINE:
-                    UserManagement.setUserStatus(user,User.Status.ONLINE);
-                    break;
-            case BADREQUEST:
+            case CHANGE_STATUS_ONLINE:
+                UserManagement.setUserStatus(user,User.Status.ONLINE);
+                break;
+            case BAD_REQUEST:
         }
 
     }
 
-    /** This method sends data/packet to the client from server where the packet
+    /**
+     * This method sends data/packet to the client from server where the packet
      * is specified in the parameter.
      *
      * @param packet the packet id the client receives

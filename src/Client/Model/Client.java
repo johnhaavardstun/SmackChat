@@ -1,30 +1,23 @@
 package Client.Model;
 
-import Client.Controller.MainController;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.scene.control.Alert;
-
-import javax.rmi.CORBA.Util;
-import javax.tools.JavaCompiler;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/** This class creates a client socket and if client is successfully logged into SmackChat,
+/**
+ * This class creates a client socket and if client is successfully logged into SmackChat,
  * it will establish a connection with the server.
  * Then this class will start a task loop where it handles and
  * manages all the packets received from the server.
  * When this client has established a connection to a author client in SmackChat, it will start a new thread,
  * where both clients can chat to each other in SmackChat.
  *
- * Created by Ali on 30.01.2017.
- * @version IntelliJ IDEA 2016.3.4
  */
 public class Client extends Task<Void> {
 
@@ -46,13 +39,14 @@ public class Client extends Task<Void> {
      * @param packet the packet id the server receives
      * @throws IOException throws NullPointerException
      */
-    public void  sendData(Packet packet) throws IOException {
-        System.out.println("data bir sendt");
+    public void sendData(Packet packet) throws IOException {
+//        System.out.println("data bir sendt");
         oos.writeObject(packet);
         oos.flush();
     }
 
-    /**This method handles the packet data sent from the server and
+    /**
+     * This method handles the packet data sent from the server and
      * sends the correct packet back to the server.
      *
      * <p>Each packet this method receives and sends has a packet id, by
@@ -66,53 +60,53 @@ public class Client extends Task<Void> {
      */
     public void handleData(Packet packet)
     {
-        switch (packet.getPacketid()) {
-            case USERNAMETAKEN:
-                this.updateMessage(System.currentTimeMillis() + "@USERNAMETAKEN!");
+        switch (packet.getPacketId()) {
+            case USERNAME_TAKEN:
+                this.updateMessage(System.currentTimeMillis() + "@USERNAME_TAKEN!");
                 System.out.println("opptatt brukernavn");
                 break;
-            case LOGINOK:
+            case LOGIN_OK:
                 Timer timer= new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         try {
-                            sendData(new Packet(Packet.Packetid.USERLISTREQUEST,"ListRequest"));
+                            sendData(new Packet(Packet.PacketId.USER_LIST_REQUEST,"ListRequest"));
                         } catch (IOException e) {
 
 
                         }
                     }
                 }, 1000, 5000);
-                    clientUser=packet.getMessage();
-                this.updateMessage(System.currentTimeMillis() + "@LOGINOK!");
+                clientUser = packet.getMessage();
+                this.updateMessage(System.currentTimeMillis() + "@LOGIN_OK!");
                 System.out.println("Login - yay!");
                 break;
-            case REGISTEROK:
-                this.updateMessage(System.currentTimeMillis() + "@REGISTEROK!");
+            case REGISTER_OK:
+                this.updateMessage(System.currentTimeMillis() + "@REGISTER_OK!");
                 System.out.println("Suksessfull registrering");
                 break;
-            case WRONGLOGIN:
-                this.updateMessage(System.currentTimeMillis() + "@WRONGLOGIN!");
+            case WRONG_LOGIN:
+                this.updateMessage(System.currentTimeMillis() + "@WRONG_LOGIN!");
                 System.out.print("Dette er feil ifno");
                 break;
-            case BADREQUEST:
-                this.updateMessage(System.currentTimeMillis() + "@BADREQUEST!");
+            case BAD_REQUEST:
+                this.updateMessage(System.currentTimeMillis() + "@BAD_REQUEST!");
                 System.out.print("feil");
                 break;
-            case USERLIST:
-                this.updateMessage(System.currentTimeMillis() + "@USERLIST!" + packet.getMessage());
+            case USER_LIST:
+                this.updateMessage(System.currentTimeMillis() + "@USER_LIST!" + packet.getMessage());
                 break;
-            case INCOMINGCONNECTION:
+            case CHAT_CONNECTION_REQUEST_CLIENT:
                 this.updateMessage(System.currentTimeMillis() +"@CHAT!"+packet.getMessage());
                 System.out.print("Mottok en request.");
                 break;
-            case CONNECTIONINFORMATION:
-                this.updateMessage(System.currentTimeMillis() +"@CONNECTIONINFORMATION!" + packet.getMessage());
+            case CHAT_CONNECTION_INFORMATION:
+                this.updateMessage(System.currentTimeMillis() +"@CHAT_CONNECTION_INFORMATION!" + packet.getMessage());
                 System.out.println("Mottok kontakt informasjon");
                 break;
             default:
-                this.updateMessage(System.currentTimeMillis() + "@BADREQUEST!");
+                this.updateMessage(System.currentTimeMillis() + "@BAD_REQUEST!");
                 System.out.println("ukjent pakke");
         }
 
@@ -198,7 +192,7 @@ public class Client extends Task<Void> {
 
                             if((packet=(Packet)oin.readObject())!=null)
                             {
-                             //   System.out.println(packet.getMessage()+"   "+packet.getPacketid());
+                             //   System.out.println(packet.getMessage()+"   "+packet.getPacketId());
                                 handleData(packet);
                             }
 
@@ -210,7 +204,7 @@ public class Client extends Task<Void> {
                         }
 
                     } catch (IOException e) {
-                        this.updateMessage("SERVERLOST");
+                        this.updateMessage(System.currentTimeMillis() + "@SERVER_LOST!");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
