@@ -194,6 +194,9 @@ public class ChatSession extends Task<Void> {
                                     case CHAT_MESSAGE:
                                         chat.updateMessage(System.currentTimeMillis() + "@CHAT_MESSAGE!" + packet.getMessage());
                                         break;
+                                    case CHAT_SMACK:
+                                        chat.updateMessage(System.currentTimeMillis() + "@SMACK_RECEIVED!");
+                                        break;
                                     case CHAT_STOP:
                                         sendData(new Packet(Packet.PacketId.CHAT_STOP_ACKNOWLEDGED, null));
                                     case CHAT_STOP_ACKNOWLEDGED:

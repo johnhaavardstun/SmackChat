@@ -32,6 +32,7 @@ public class Packet implements Serializable
         CHAT_CONNECTION_INFORMATION     ((byte) 43),
         CHAT_CONNECTION_REFUSED         ((byte) 49),
         CHAT_MESSAGE                    ((byte) 50),
+        CHAT_SMACK                      ((byte) 51),
         CHAT_STOP                       ((byte) 58),
         CHAT_STOP_ACKNOWLEDGED          ((byte) 59),
         CHANGE_STATUS_BUSY              ((byte) 60),

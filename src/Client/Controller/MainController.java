@@ -5,6 +5,7 @@ import Client.Model.ChatSession;
 import Client.Model.Client;
 import Client.Model.Packet;
 import Client.Model.UserStatus;
+import javafx.animation.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -17,11 +18,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ public class MainController {
     // in startToChat.fxml
     @FXML private Button connect;
     @FXML private Button send;
+    @FXML private Button smack;
     @FXML private Button disconnect;
     @FXML private ListView<UserStatus> userList;
     @FXML private TextArea chatbox;
@@ -56,6 +58,7 @@ public class MainController {
     private ChatSession cSession;
     private boolean firstRun = false;
     private SimpleBooleanProperty isChatting = new SimpleBooleanProperty(false);
+    private long lastSmack = 0;
 
     /**
      * This method initializes this client, by doing so it starts a new thread for this client.
@@ -126,6 +129,9 @@ public class MainController {
             case "CHAT_MESSAGE":
                 System.out.println("Har motatt chat melding!");
                 incomingChatMessage(data);
+                break;
+            case "SMACK_RECEIVED":
+                smackReceived();
                 break;
             case "BAD_REQUEST":
                 System.out.println("skjedde en feil");
@@ -215,6 +221,7 @@ public class MainController {
 
         send.setDefaultButton(true);
         send.disableProperty().bind(isChatting.not());
+        smack.disableProperty().bind(isChatting.not());
         textField.disableProperty().bind(isChatting.not());
         connect.disableProperty().bind(isChatting);
         disconnect.disableProperty().bind(isChatting.not());
@@ -299,6 +306,10 @@ public class MainController {
 
     }
 
+    /**
+     * This method will open a JavaFX TextInputDialog to allow the user to change the IP of the server to
+     * connect to from the default localhost (127.0.0.1).
+     */
     @FXML
     public void changeServerIP()
     {
@@ -309,6 +320,54 @@ public class MainController {
         Optional<String> result = dialog.showAndWait();
 
         result.ifPresent(s -> serverIP = s);
+    }
+
+    /**
+     * This method sends a Smack to the person you are chatting with - putting the Smack in SmackChat!
+     */
+    @FXML
+    public void sendSmack()
+    {
+        if (isChatting.get())
+        {
+            try {
+                cSession.sendData(new Packet(Packet.PacketId.CHAT_SMACK, null));
+                chatbox.appendText("You smack " + cSession.getChattingWith() + " playfully!\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * This method is called when your chat partner sends a Smack - it moves the window across
+     * the screen briefly, simulating a friendly smack. To prevent horrible abuse, the animation
+     * will only run every 5 seconds at most.
+     */
+    public void smackReceived()
+    {
+        long now = System.currentTimeMillis();
+        if (now - lastSmack > 5000) {
+            Transition t = new Transition() {
+                Stage stage = (Stage) send.getScene().getWindow();
+                double startX = stage.getX();
+                double smackWidth = Screen.getPrimary().getBounds().getWidth() + stage.getWidth();
+
+                {
+                    setCycleDuration(Duration.millis(350));
+                }
+
+                @Override
+                protected void interpolate(double frac) {
+                    stage.setX((startX + smackWidth * frac) % smackWidth);
+                }
+            };
+            t.setInterpolator(Interpolator.EASE_OUT);
+
+            t.play();
+            lastSmack = now;
+            chatbox.appendText(cSession.getChattingWith() + " playfully smacks you!\n");
+        }
     }
 
     /**
