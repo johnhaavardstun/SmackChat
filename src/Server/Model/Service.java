@@ -98,7 +98,8 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
         return task;
     }
 
-    /** This method handles the packet data sent from the client and
+    /**
+     * This method handles the packet data sent from the client and
      * sends the correct packet back to the client.
      *
      * <p>Each packet this method receives and sends has a packet id, by

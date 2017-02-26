@@ -30,7 +30,12 @@ public class Client extends Task<Void> {
 
     private final int SERVERTPORT=8000;
     private final String SERVERIP="127.0.0.1";
+    private String serverIP;
 
+    public Client(String serverIP)
+    {
+        this.serverIP = serverIP;
+    }
 
     /**
      * This method sends data/packet to the server from client where the packet
@@ -99,7 +104,7 @@ public class Client extends Task<Void> {
                 break;
             case CHAT_CONNECTION_REQUEST_CLIENT:
                 this.updateMessage(System.currentTimeMillis() +"@CHAT!"+packet.getMessage());
-                System.out.print("Mottok en request.");
+                System.out.println("Mottok en request.");
                 break;
             case CHAT_CONNECTION_INFORMATION:
                 this.updateMessage(System.currentTimeMillis() +"@CHAT_CONNECTION_INFORMATION!" + packet.getMessage());
@@ -125,7 +130,8 @@ public class Client extends Task<Void> {
     @Override
     protected Void call() throws Exception {
         System.out.println("Metode Call(): lager socket");
-        s = new Socket(SERVERIP, SERVERTPORT);
+        s = new Socket(serverIP, SERVERTPORT);
+        System.out.println("connected to server @ " + s.getInetAddress().getHostAddress() + ":" + s.getPort());
         if (!s.isConnected())
             throw new IOException("Could not connect to server!");
         oos = new ObjectOutputStream(s.getOutputStream());
@@ -149,7 +155,7 @@ public class Client extends Task<Void> {
     public void start()
     {
         System.out.println("|>|>|> Client created! <|<|<|");
-        Thread t= new Thread(this);
+        Thread t = new Thread(this);
         t.start();
         System.out.println("Client thread: " + t.getName());
         t.setUncaughtExceptionHandler((thr, e) -> {

@@ -2,8 +2,10 @@ package Client.Model;
 
 import javafx.concurrent.Task;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * This class establishes a peer-to-peer connection between two clients. If connection is established, this class
@@ -76,7 +78,8 @@ public class ChatSession extends Task<Void> {
 
     }
 
-    /**This method starts a new thread for this client and the author client where the chat
+    /**
+     * This method starts a new thread for this client and the author client where the chat
      * session will be proceeded.
      */
     public void start() {
@@ -88,7 +91,8 @@ public class ChatSession extends Task<Void> {
 
     }
 
-    /** This method sends data/packet to the author client you are having a chat session
+    /**
+     * This method sends data/packet to the author client you are having a chat session
      * with, where the packet is specified in the parameter.
      *
      * @param packet the packet id the author client receives
@@ -103,17 +107,24 @@ public class ChatSession extends Task<Void> {
         }
     }
 
-    /** This method gets the server ip from this client.
+    /**
+     * This method gets the server ip from this client.
      *
      * @return the server ip of this client
      */
     public String getServerIP() {
         String s = null;
-        s = ssc.getInetAddress().getHostAddress();
+//        s = ssc.getInetAddress().getHostAddress();
+        try {
+            s = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         return s;
     }
 
-    /** This method gets the server port number from this client
+    /**
+     * This method gets the server port number from this client
      *
      * @return the server port from this client
      */
@@ -122,7 +133,8 @@ public class ChatSession extends Task<Void> {
         return i;
     }
 
-    /** This method sets the user name of who you are chatting with a specified user name.
+    /**
+     * This method sets the user name of who you are chatting with a specified user name.
      *
      * <p>This method is used to set the chat window to be set to this client
      * and the other client you are having a chat session with.</p>
@@ -150,7 +162,8 @@ public class ChatSession extends Task<Void> {
         }
     }
 
-    /** This class manages the chat session between this client and the other client
+    /**
+     * This class manages the chat session between this client and the other client
      * you are chatting with.
      * <p>It starts a task loop where it reads the packet message received from the author client.
      * The chat will then be updated with the chat message received from the other client.</p>

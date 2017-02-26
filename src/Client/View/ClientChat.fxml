@@ -14,7 +14,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.Controller.MainController">
    <children>
-      <Pane layoutX="-4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="0.0">
+      <Pane layoutX="-4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <MenuBar prefHeight="25.0" prefWidth="600.0">
               <menus>
@@ -41,12 +41,13 @@
             <PasswordField fx:id="password" layoutX="247.0" layoutY="215.0" prefHeight="25.0" prefWidth="126.0" />
             <Button fx:id="login" defaultButton="true" layoutX="157.0" layoutY="260.0" mnemonicParsing="false" onAction="#login" prefHeight="25.0" prefWidth="126.0" text="Log in" />
             <Button fx:id="register" layoutX="313.0" layoutY="260.0" mnemonicParsing="false" onAction="#register" prefHeight="25.0" prefWidth="126.0" text="Register" />
-            <Text layoutX="14.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Copyrighted to Ali " />
+            <Text layoutX="14.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Copyright 2017 The SmackChat Team" />
             <ImageView fitHeight="123.0" fitWidth="128.0" layoutX="236.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@chat.png" />
                </image>
             </ImageView>
+            <Button layoutX="536.0" layoutY="34.0" mnemonicParsing="false" onAction="#changeServerIP" text="Server" />
          </children>
       </Pane>
    </children>

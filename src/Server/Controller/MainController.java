@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -16,6 +17,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 /** This class is the main controller of the server which launches the server and handles all GUI functionality
@@ -29,12 +32,10 @@ public class MainController {
     @FXML Button kick;
     @FXML Button delete;
     @FXML ListView<User> list;
+    @FXML Label serverInfo;
 
-
-   /* ArrayList<String> haha= new ArrayList<>();
-    ObservableList<String> ali= FXCollections.observableArrayList(haha);*/
-
-    /** This method initializes the Server. By doing so it displays
+    /**
+     * This method initializes the Server. By doing so it displays
      * and updates all the registered users in SmackChat, where the server
      * can get information, kick or delete a user.
      */
@@ -44,11 +45,8 @@ public class MainController {
         try {
             UserManagement.readFile();
             list.setItems(FXCollections.observableList(UserManagement.getUsers()));
-            UserManagement.addStatusListener((observable, oldValue, newValue) -> {
-                System.out.println("user status endret...");
-                //System.out.println(newValue);
+            UserManagement.addStatusListener(user -> {
                 Platform.runLater(() -> {
-                    System.out.println("kjøres dette noensinne?");
                     list.setItems(null);
                     list.setItems(FXCollections.observableList(UserManagement.getUsers()));
                 });
@@ -57,10 +55,14 @@ public class MainController {
             e.printStackTrace();
         }
 
-        Server serv= new Server();
+        Server serv = new Server();
         serv.start();
 
-//        setItems(ali);
+        try {
+            serverInfo.setText("Server running on " + InetAddress.getLocalHost().getHostAddress() + ":" + serv.PORT);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
         list.setCellFactory(new Callback<ListView<User>, ListCell<User>>() {
 

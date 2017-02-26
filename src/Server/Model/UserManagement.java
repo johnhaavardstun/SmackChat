@@ -1,38 +1,42 @@
 package Server.Model;
 
-import javafx.beans.value.ChangeListener;
-
 import java.io.*;
 import java.lang.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/** Class that manages the users
+/**
+ * Class that manages the users
  * <p>This class contains methods that manages the users status and
  * which user is registered in SmackChat.</p>
  *
- * Created by Ali on 27.01.2017.
- * @version IntelliJ IDEA 2016.3.4
  */
 public class UserManagement
 {
-    public static String curLine;
-    public static String testLine;
-    public static  String usrN;
-    public static String usrP;
+
 
     private static List<User> userList = new ArrayList<>(); //FXCollections.observableArrayList();
-    private static List<ChangeListener<User.Status>> listeners = new ArrayList<>();
+    private static List<UserStatusChangeListener> listeners = new ArrayList<>();
 
-    /** <h1>Method that reads a file</h1>
+    @FunctionalInterface public interface UserStatusChangeListener
+    {
+        void onChange(User u);
+    }
+
+    /**
+     * <h1>Method that reads a file</h1>
      *
      * <p>This method reads a file which contains registered users.
      * While reading this file this method puts the registered users in a list.</p>
      *
      * @throws IOException when it can not find the given file name.
      */
-    public static void readFile() throws IOException {
+    public static void readFile() throws IOException
+    {
+        String curLine;
+        String usrN;
+        String usrP;
 
         BufferedReader rFile = new BufferedReader(new FileReader("./src/Server/users.txt"));
         while((curLine = rFile.readLine()) != null)
@@ -49,7 +53,8 @@ public class UserManagement
         System.out.println(ArraytoString());
     }
 
-    /** Method that returns registered users.
+    /**
+     * Method that returns registered users.
      *
      * <p>Returns a list of all the registered users.</p>
      *
@@ -60,12 +65,13 @@ public class UserManagement
         String s = "";
         for(User user : userList)
         {
-          s+= user.toString()+'\n';
+          s += user.toString()+'\n';
         }
         return s;
     }
 
-    /** Method which tests whether the username is available.
+    /**
+     * Method which tests whether the username is available.
      *
      * <p>This method iterates through the user list to test
      * whether the username is available.</p>
@@ -89,7 +95,8 @@ public class UserManagement
 
     }
 
-    /** Method that adds user to file
+    /**
+     * Method that adds user to file
      *
      * <p>This method registers a new user into user file and
      * adds the user into the user list.</p>
@@ -100,8 +107,9 @@ public class UserManagement
      */
     public static void addUserToFile(String n, String p) throws IOException
     {
+        String usrN;
+        String usrP;
         BufferedWriter wFile = new BufferedWriter(new FileWriter("./src/Server/users.txt", true));
-
         usrN = n;
         usrP = p;
         User newUser = new User(n,p);
@@ -201,7 +209,7 @@ public class UserManagement
      *
      * @param listener to a user status
      */
-    public static void addStatusListener(ChangeListener<User.Status> listener)
+    public static void addStatusListener(UserStatusChangeListener listener)
     {
         listeners.add(listener);
     }
@@ -238,8 +246,8 @@ public class UserManagement
 
         User.Status oldStatus = user.getStatus();
         user.setStatus(status);
-        for (ChangeListener listener: listeners)
-            listener.changed(null, oldStatus, status);
+        for (UserStatusChangeListener listener: listeners)
+            listener.onChange(user);
     }
 
 }

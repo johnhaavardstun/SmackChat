@@ -19,8 +19,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +51,7 @@ public class MainController {
     @FXML private Label userinfo;
 
     private    String  superdupercode="§§§¤";
+    private String serverIP = "127.0.0.1";
     private Client c;
     private ChatSession cSession;
     private boolean firstRun = false;
@@ -63,19 +65,6 @@ public class MainController {
     {
         if (!firstRun) {
             firstRun = true;
-            c = new Client();
-            c.start();
-            System.out.println(Thread.currentThread().getName() + " >>> " + c);
-
-            c.messageProperty().addListener(((observable, oldValue, newValue) -> {
-                onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
-                                newValue.substring(1 + newValue.indexOf('!')));
-            }));
-
-            c.exceptionProperty().addListener((observable, oldValue, newValue) -> {
-                showMessageToClient(AlertType.ERROR, "Server error!", newValue.getMessage());
-                System.exit(876);
-            });
 
             login.disableProperty().bind(Bindings.and(
                     Bindings.length(username.textProperty()).greaterThan(1),
@@ -122,7 +111,7 @@ public class MainController {
                 showMessageToClient(AlertType.ERROR, "Login failed!",
                         "The username and/or password is incorrect, scrub!");
                 break;
-            case "SERVERLOST":
+            case "SERVER_LOST":
                 showMessageToClient(AlertType.ERROR, "Server lost!",
                         "The connection to the server was lost, please try again later.");
                 break;
@@ -131,7 +120,7 @@ public class MainController {
 //                System.out.println(data);
                 break;
             case "CHAT":
-                System.out.print("Mottok en chat reuqest");
+                System.out.println("Mottok en chat reuqest");
                 chatConfirmation(data);
                 break;
             case "CHAT_MESSAGE":
@@ -310,6 +299,18 @@ public class MainController {
 
     }
 
+    @FXML
+    public void changeServerIP()
+    {
+        TextInputDialog dialog = new TextInputDialog(serverIP);
+        dialog.setTitle("Change server IP address");
+        dialog.setContentText("Server IP");
+        dialog.setHeaderText(null);
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(s -> serverIP = s);
+    }
+
     /**
      * This method sends a LOGIN packet to the server, where the packet contains
      * the username and password specified in the text fields by the client.
@@ -317,21 +318,34 @@ public class MainController {
      */
     public void login()
     {
+        c = new Client(serverIP);
+        c.start();
+
+        c.messageProperty().addListener(((observable, oldValue, newValue) -> {
+            onServerMessage(newValue.substring(1 + newValue.indexOf('@'), newValue.indexOf('!')),
+                    newValue.substring(1 + newValue.indexOf('!')));
+        }));
+
+        c.exceptionProperty().addListener((observable, oldValue, newValue) -> {
+            showMessageToClient(AlertType.ERROR, "Server error!", newValue.getMessage());
+//                System.exit(876);
+        });
+
         try
         {
-            System.out.println("lag pakket");
-
+            Thread.sleep(200);
             String sd=getTextFieldData(username)+superdupercode+getTextFieldData(password);
             System.out.println(sd);
 
             Packet pa= new Packet(Packet.PacketId.LOGIN,sd);
 
             c.sendData(pa);
-            System.out.println(Thread.currentThread().getName() + " >>> " + c);
         }
         catch (IOException e)
         {
             showMessageToClient(AlertType.ERROR,"Connection Refused","Server is down please try again later!");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -434,7 +448,8 @@ public class MainController {
                 }));
 
                 // TODO: fix this shit
-                String connectionInfo = "127.0.0.1" + ":" + cSession.getServerPort() + ":" + userName;
+//                String connectionInfo = "127.0.0.1" + ":" + cSession.getServerPort() + ":" + userName;
+                String connectionInfo = cSession.getServerIP() + ":" + cSession.getServerPort() + ":" + userName;
                 System.out.println(connectionInfo);
                 cSession.setChatter(userName);
                 c.sendData(new Packet(Packet.PacketId.CHAT_CONNECTION_ACCEPTED, connectionInfo));
