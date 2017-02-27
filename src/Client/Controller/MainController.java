@@ -47,6 +47,7 @@ public class MainController {
     @FXML private Button send;
     @FXML private Button smack;
     @FXML private Button disconnect;
+    @FXML private Button logout;
     @FXML private ListView<UserStatus> userList;
     @FXML private TextArea chatbox;
     @FXML private TextField textField;
@@ -59,6 +60,7 @@ public class MainController {
     private boolean firstRun = false;
     private SimpleBooleanProperty isChatting = new SimpleBooleanProperty(false);
     private long lastSmack = 0;
+    private Scene loginScene;
 
     /**
      * This method initializes this client, by doing so it starts a new thread for this client.
@@ -112,7 +114,11 @@ public class MainController {
                 break;
             case "WRONG_LOGIN":
                 showMessageToClient(AlertType.ERROR, "Login failed!",
-                        "The username and/or password is incorrect, scrub!");
+                        "The username and/or password is incorrect!");
+                break;
+            case "ALREADY_LOGGED_IN":
+                showMessageToClient(AlertType.WARNING, "User already logged in",
+                        "The user you tried to log in as, is already logged in elsewhere!");
                 break;
             case "SERVER_LOST":
                 showMessageToClient(AlertType.ERROR, "Server lost!",
@@ -208,14 +214,14 @@ public class MainController {
             fxml.setController(this);
             root = fxml.load();
             chatbox.setEditable(false);
-            userinfo.setText("Logged in as: "+c.getUser());
-
-
+            userinfo.setText("Logged in as: " + c.getUser());
         } catch (IOException e) {
-            showMessageToClient(AlertType.ERROR, "Could not log in", "A unexpected error has occured, please restart");
+            showMessageToClient(AlertType.ERROR, "Could not log in", "A unexpected error has occurred, please restart");
             e.printStackTrace();
-            System.exit(9876543);
+            System.exit(1);
         }
+
+        loginScene = login.getScene();
 
         ((Stage) login.getScene().getWindow()).setScene(new Scene(root, 600, 400));
 
@@ -332,7 +338,7 @@ public class MainController {
         {
             try {
                 cSession.sendData(new Packet(Packet.PacketId.CHAT_SMACK, null));
-                chatbox.appendText("You smack " + cSession.getChattingWith() + " playfully!\n");
+                chatbox.appendText("** You smack " + cSession.getChattingWith() + " playfully! **\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -366,7 +372,7 @@ public class MainController {
 
             t.play();
             lastSmack = now;
-            chatbox.appendText(cSession.getChattingWith() + " playfully smacks you!\n");
+            chatbox.appendText("** " + cSession.getChattingWith() + " playfully smacks you! **\n");
         }
     }
 
@@ -617,6 +623,20 @@ public class MainController {
         {
             cSession.endChat();
         }
+    }
+
+    /**
+     * This method logs you out from the server, and returns you to the login scene.
+     */
+    @FXML
+    public void logOut()
+    {
+        disconnectFromChat();
+        c.stop();
+        ((Stage) logout.getScene().getWindow()).setScene(loginScene);
+        username.setText(null);
+        password.setText(null);
+        username.requestFocus();
     }
 
 }
