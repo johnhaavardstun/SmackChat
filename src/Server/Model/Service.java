@@ -90,8 +90,10 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
             if (newValue == State.CANCELLED || newValue == State.FAILED || newValue == State.SUCCEEDED)
             {
                 // klienten har disconnected?
-                if (user != null)
+                if (user != null) {
                     UserManagement.setUserStatus(user, User.Status.OFFLINE);
+                    Server.map.remove(user.getUsername());
+                }
             }
         });
 
@@ -111,7 +113,7 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
      * @param packet the packet this method receives from the client
      * @throws IOException throws NullPointerException
      */
-    public synchronized void handleData(Packet packet) throws IOException {
+    public void handleData(Packet packet) throws IOException {
 
         System.out.println(packet.getPacketId());
         String data=packet.getMessage();
@@ -121,6 +123,13 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                 String[] info=data.split("§§§¤");
                 if(UserManagement.checkIfLoginCorrect(info[0],info[1]))
                 {
+                    if (Server.map.get(info[0]) != null)
+                    {
+                        // Error: already logged in
+                        sendData(new Packet(Packet.PacketId.ALREADY_LOGGED_IN, null));
+                        break;
+                    }
+
                     brukernavn=info[0];
                     // oppdater user status
                     user = UserManagement.getUser(info[0]);

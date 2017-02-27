@@ -28,9 +28,10 @@ public class Client extends Task<Void> {
     private Packet p=null;
     private String clientUser;
 
-    private final int SERVERTPORT=8000;
-    private final String SERVERIP="127.0.0.1";
+    private final int SERVER_PORT = 8000;
+//    private final String SERVERIP = "127.0.0.1";
     private String serverIP;
+    Timer timer;
 
     public Client(String serverIP)
     {
@@ -71,7 +72,7 @@ public class Client extends Task<Void> {
                 System.out.println("opptatt brukernavn");
                 break;
             case LOGIN_OK:
-                Timer timer= new Timer();
+                timer= new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
@@ -94,6 +95,9 @@ public class Client extends Task<Void> {
             case WRONG_LOGIN:
                 this.updateMessage(System.currentTimeMillis() + "@WRONG_LOGIN!");
                 System.out.print("Dette er feil ifno");
+                break;
+            case ALREADY_LOGGED_IN:
+                this.updateMessage(System.currentTimeMillis() + "@ALREADY_LOGGED_IN!");
                 break;
             case BAD_REQUEST:
                 this.updateMessage(System.currentTimeMillis() + "@BAD_REQUEST!");
@@ -129,20 +133,16 @@ public class Client extends Task<Void> {
 
     @Override
     protected Void call() throws Exception {
-        System.out.println("Metode Call(): lager socket");
-        s = new Socket(serverIP, SERVERTPORT);
+        s = new Socket(serverIP, SERVER_PORT);
         System.out.println("connected to server @ " + s.getInetAddress().getHostAddress() + ":" + s.getPort());
         if (!s.isConnected())
             throw new IOException("Could not connect to server!");
         oos = new ObjectOutputStream(s.getOutputStream());
         oos.flush();
 
-        readinfo rd= new readinfo(s);
-        rd.start();
+        ClientListener cl = new ClientListener(s);
+        cl.start();
 
-
-
-        System.out.println("readinfo (tastatur) startet");
         return null;
     }
 
@@ -154,10 +154,8 @@ public class Client extends Task<Void> {
      */
     public void start()
     {
-        System.out.println("|>|>|> Client created! <|<|<|");
         Thread t = new Thread(this);
         t.start();
-        System.out.println("Client thread: " + t.getName());
         t.setUncaughtExceptionHandler((thr, e) -> {
             this.setException(e);
         });
@@ -165,16 +163,29 @@ public class Client extends Task<Void> {
     }
 
     /**
+     * This method closes down the connection to the server.
+     */
+    public void stop()
+    {
+        try {
+            timer.cancel();
+            s.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * When established connection with the server. This class is used to read
      * the packets received from the server. It will start a task loop and read
      * the ObjectInputStream received from the socket and handle the data/packet.
      */
-    private class readinfo extends Service<Void>
+    private class ClientListener extends Service<Void>
     {
         Socket socket;
         Packet packet=null;
 
-        private readinfo(Socket socket)
+        private ClientListener(Socket socket)
         {
             this.socket=socket;
         }
@@ -183,45 +194,35 @@ public class Client extends Task<Void> {
         protected Task<Void> createTask() {
             Task<Void> task= new Task<Void>() {
 
-
                 @Override
                 protected Void call() throws Exception {
-
-
-                    try {
-
+                    try
+                    {
                        ObjectInputStream oin= new ObjectInputStream(socket.getInputStream());
 
-                        while ((true)) {
-
-                    //   System.out.println("leser Objekt input stream");
-
+                        while (true)
+                        {
                             if((packet=(Packet)oin.readObject())!=null)
                             {
-                             //   System.out.println(packet.getMessage()+"   "+packet.getPacketId());
                                 handleData(packet);
                             }
-
-
-
-                           // System.out.println("Objektet er ferdig lest");
-
-
                         }
 
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e)
+                    {
                         this.updateMessage(System.currentTimeMillis() + "@SERVER_LOST!");
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e)
+                    {
                         e.printStackTrace();
                     }
 
-                    return  null;
+                    return null;
 
                 }
 
             };
-
-
 
             return task;
         }

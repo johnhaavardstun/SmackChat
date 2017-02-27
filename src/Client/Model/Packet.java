@@ -20,6 +20,7 @@ public class Packet implements Serializable
     {
         LOGIN                           ((byte) 10),
         LOGIN_OK                        ((byte) 11),
+        ALREADY_LOGGED_IN               ((byte) 18),
         WRONG_LOGIN                     ((byte) 19),
         REGISTER                        ((byte) 20),
         REGISTER_OK                     ((byte) 21),
