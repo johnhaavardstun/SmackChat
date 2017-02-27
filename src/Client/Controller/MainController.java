@@ -31,7 +31,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class is the main controller of the client which gets the events from the view and deals with user input.
+ * This class is the main controller of the client which gets the events from the view, handles them and updates the view
+ * if necessary.
  *
  */
 public class MainController {
@@ -63,7 +64,8 @@ public class MainController {
     private Scene loginScene;
 
     /**
-     * This method initializes this client, by doing so it starts a new thread for this client.
+     * This method initializes the client, by doing so it starts a new thread for this client.
+     * @see Client
      *
      */
     public void initialize()
@@ -83,9 +85,7 @@ public class MainController {
     }
 
     /**
-     * This method handles the packet data sent from the server and
-     * executes the correct case based on the packet data and message
-     * received from the server.
+     * This method updates the user interface upon reciving different responses from the server.
      *
      * <p>Each packet this method receives has a packet id, by
      * getting the packet id to the packet sent from the server, this
@@ -105,7 +105,6 @@ public class MainController {
                         "Please choose another username.");
                 break;
             case "LOGIN_OK":
-                System.out.println("login ok!");
                 switchToLoginScene();
                 break;
             case "REGISTER_OK":
@@ -126,27 +125,22 @@ public class MainController {
                 break;
             case "USER_LIST":
                 updateUserList(data);
-//                System.out.println(data);
                 break;
             case "CHAT":
-                System.out.println("Mottok en chat reuqest");
                 chatConfirmation(data);
                 break;
             case "CHAT_MESSAGE":
-                System.out.println("Har motatt chat melding!");
                 incomingChatMessage(data);
                 break;
             case "SMACK_RECEIVED":
                 smackReceived();
                 break;
             case "BAD_REQUEST":
-                System.out.println("skjedde en feil");
                 break;
             case "CHAT_CONNECTION_INFORMATION":
                 String[] cinfo = data.split(":");
                 System.out.println(Arrays.toString(cinfo));
                 startChatConnect(cinfo[0], Integer.parseInt(cinfo[1]),cinfo[2]);
-                System.out.println("Mottok kontakt informasjon!");
                 break;
             case "CHAT_CLOSED":
                 try
@@ -478,7 +472,6 @@ public class MainController {
         String s = statusU.getUserName();
         if(statusU != null && statusU.getStatus() == UserStatus.Status.ONLINE &&(!s.equals(c.getUser()))) {
 
-            System.out.println(s);
                 try {
                     c.sendData(new Packet(Packet.PacketId.CHAT_CONNECTION_REQUEST_SERVER, s));
                 } catch (IOException e) {
@@ -512,10 +505,7 @@ public class MainController {
                             newValue.substring(1 + newValue.indexOf('!')));
                 }));
 
-                // TODO: fix this shit
-//                String connectionInfo = "127.0.0.1" + ":" + cSession.getServerPort() + ":" + userName;
                 String connectionInfo = cSession.getServerIP() + ":" + cSession.getServerPort() + ":" + userName;
-                System.out.println(connectionInfo);
                 cSession.setChatter(userName);
                 c.sendData(new Packet(Packet.PacketId.CHAT_CONNECTION_ACCEPTED, connectionInfo));
 
@@ -567,7 +557,6 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Client 2 og Client 1 har connected med hverandre");
 
     }
 
@@ -605,7 +594,7 @@ public class MainController {
     /**
      * This method displays the incoming chat message, you have received from the other client, into
      * the chat box.
-     * @param message
+     * @param message the message that is recived from an another user
      */
     public void incomingChatMessage(String message)
     {

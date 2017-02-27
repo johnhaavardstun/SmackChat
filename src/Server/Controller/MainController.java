@@ -37,7 +37,7 @@ public class MainController {
     /**
      * This method initializes the Server. By doing so it displays
      * and updates all the registered users in SmackChat, where the server
-     * can get information, kick or delete a user.
+     * can get information.
      */
     public void initialize()
     {

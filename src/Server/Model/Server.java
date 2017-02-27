@@ -13,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * When clients are connected to the server, this class keeps track of each
  * client by using ConcurrentHashMap.
  *
+ * @see Service
+ *
  */
 public class Server extends Task<Void> {
 
@@ -47,8 +49,7 @@ public class Server extends Task<Void> {
     }
 
     /**
-     * This method starts a new thread for a client which is successfully
-     * logged into the program.
+     * This method starts a new thread which listens to incoming connections.
      * This method enables multiple clients to be
      * logged into one server.
      */

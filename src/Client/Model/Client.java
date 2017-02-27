@@ -15,8 +15,6 @@ import java.util.TimerTask;
  * it will establish a connection with the server.
  * Then this class will start a task loop where it handles and
  * manages all the packets received from the server.
- * When this client has established a connection to a author client in SmackChat, it will start a new thread,
- * where both clients can chat to each other in SmackChat.
  *
  */
 public class Client extends Task<Void> {
@@ -43,10 +41,9 @@ public class Client extends Task<Void> {
      * is specified in the parameter.
      *
      * @param packet the packet id the server receives
-     * @throws IOException throws NullPointerException
+     * @throws IOException if an errors occurs during the input or output.
      */
     public void sendData(Packet packet) throws IOException {
-//        System.out.println("data bir sendt");
         oos.writeObject(packet);
         oos.flush();
     }
@@ -62,14 +59,13 @@ public class Client extends Task<Void> {
      * correct result back to the server.</p>
      *
      * @param packet the packet this method receives from the server
-     * @throws IOException throws NullPointerException
+     * @throws IOException if an errors occurs during the input or output.
      */
     public void handleData(Packet packet)
     {
         switch (packet.getPacketId()) {
             case USERNAME_TAKEN:
                 this.updateMessage(System.currentTimeMillis() + "@USERNAME_TAKEN!");
-                System.out.println("opptatt brukernavn");
                 break;
             case LOGIN_OK:
                 timer= new Timer();
@@ -86,15 +82,12 @@ public class Client extends Task<Void> {
                 }, 1000, 5000);
                 clientUser = packet.getMessage();
                 this.updateMessage(System.currentTimeMillis() + "@LOGIN_OK!");
-                System.out.println("Login - yay!");
                 break;
             case REGISTER_OK:
                 this.updateMessage(System.currentTimeMillis() + "@REGISTER_OK!");
-                System.out.println("Suksessfull registrering");
                 break;
             case WRONG_LOGIN:
                 this.updateMessage(System.currentTimeMillis() + "@WRONG_LOGIN!");
-                System.out.print("Dette er feil ifno");
                 break;
             case ALREADY_LOGGED_IN:
                 this.updateMessage(System.currentTimeMillis() + "@ALREADY_LOGGED_IN!");
@@ -108,15 +101,12 @@ public class Client extends Task<Void> {
                 break;
             case CHAT_CONNECTION_REQUEST_CLIENT:
                 this.updateMessage(System.currentTimeMillis() +"@CHAT!"+packet.getMessage());
-                System.out.println("Mottok en request.");
                 break;
             case CHAT_CONNECTION_INFORMATION:
                 this.updateMessage(System.currentTimeMillis() +"@CHAT_CONNECTION_INFORMATION!" + packet.getMessage());
-                System.out.println("Mottok kontakt informasjon");
                 break;
             default:
                 this.updateMessage(System.currentTimeMillis() + "@BAD_REQUEST!");
-                System.out.println("ukjent pakke");
         }
 
     }
@@ -147,10 +137,7 @@ public class Client extends Task<Void> {
     }
 
     /**
-     * This method starts a new thread for this client and a other different client
-     * which has accepted the connection chat request from this client. In this thread
-     * both clients can exchange messages to eachother as long as their both online,
-     * otherwise the thread will close.
+     * This method starts a new thread for this client, which is used to send requests to the server and handle the response.
      */
     public void start()
     {
@@ -179,6 +166,8 @@ public class Client extends Task<Void> {
      * When established connection with the server. This class is used to read
      * the packets received from the server. It will start a task loop and read
      * the ObjectInputStream received from the socket and handle the data/packet.
+     * @see ObjectInputStream
+     *
      */
     private class ClientListener extends Service<Void>
     {
