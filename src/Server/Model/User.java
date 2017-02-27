@@ -3,10 +3,9 @@ package Server.Model;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
 import javafx.beans.value.ObservableValue;
 
-/** Class that creates a user which can log in SmackChat.
+/**
+ * Class that creates a user which can log in SmackChat.
  *
- * Created by Ali on 27.01.2017.
- * @version IntelliJ IDEA 2016.3.4
  */
 public class User
 {

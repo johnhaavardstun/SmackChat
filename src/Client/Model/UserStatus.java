@@ -1,7 +1,8 @@
 package Client.Model;
 
 
-/** This class sets the status of a user.
+/**
+ * This class sets the status of a user.
  *
  */
 public class UserStatus

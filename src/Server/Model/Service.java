@@ -40,14 +40,10 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
     @Override
     protected Task<Void> createTask() {
-        System.out.println(">>>>>> Task created! " + this + " <<<<<<");
-
         Task<Void> task= new Task<Void>() {
-
 
             @Override
             protected Void call() throws Exception {
-
 
             try {
 
@@ -59,7 +55,7 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
                 System.out.println("Starter Task loop");
 
-                while ((true)) {
+                while (true) {
 
                     System.out.println("leser objekt/packet");
 
@@ -211,4 +207,25 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
         oot.flush();
 
     }
+
+    /**
+     * This method gets the IP address of the client this Service is servicing.
+     *
+     * @return String representation of the client IP address
+     */
+    public String getConnectedIPAddress()
+    {
+        return socket.getInetAddress().getHostAddress();
+    }
+
+    /**
+     * This method gets the port number of the client this Service is servicing.
+     *
+     * @return int representing the client port number
+     */
+    public int getConnectedPort()
+    {
+        return socket.getPort();
+    }
+
 }

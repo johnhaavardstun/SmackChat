@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Server extends Task<Void> {
 
     public final int PORT=8000;
-    static ConcurrentHashMap<String, Service> map = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, Service> map = new ConcurrentHashMap<>();
 
     @Override
     protected Void call() throws Exception {
@@ -25,16 +25,13 @@ public class Server extends Task<Void> {
         try
         {
             ServerSocket sc = new ServerSocket(PORT);
-
-            System.out.println("Har laget serverSocket!");
-
             while (true)
             {
                 Socket s = sc.accept();
 
-                System.out.println("Har akseptert client connection"+ s.getInetAddress().getHostAddress());
+                System.out.println("Har akseptert client connection " + s.getInetAddress().getHostAddress());
 
-                Service sd= new Service(s,s.getInetAddress().getHostAddress() );
+                Service sd = new Service(s, s.getInetAddress().getHostAddress() );
                 sd.start();
             }
         }
@@ -54,7 +51,6 @@ public class Server extends Task<Void> {
      */
     public void start()
     {
-        System.out.println("Starter tråd");
         Thread th= new Thread(this);
         th.setDaemon(true);
         th.start();

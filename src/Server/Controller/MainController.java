@@ -1,11 +1,11 @@
 package Server.Controller;
 
 import Server.Model.Server;
+import Server.Model.Service;
 import Server.Model.User;
 import Server.Model.UserManagement;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,26 +13,22 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
-/** This class is the main controller of the server which launches the server and handles all GUI functionality
+/**
+ * This class is the main controller of the server which launches the server and handles all GUI functionality
  * to SmackChat.
  *
- * Created by Ali on 31.01.2017.
- * @version IntelliJ IDEA 2016.3.4
  */
 public class MainController {
 
-    @FXML Button kick;
-    @FXML Button delete;
     @FXML ListView<User> list;
     @FXML Label serverInfo;
+    @FXML Label userIP;
+    @FXML Label userPort;
 
     /**
      * This method initializes the Server. By doing so it displays
@@ -47,8 +43,10 @@ public class MainController {
             list.setItems(FXCollections.observableList(UserManagement.getUsers()));
             UserManagement.addStatusListener(user -> {
                 Platform.runLater(() -> {
+                    User u = list.getSelectionModel().getSelectedItem();
                     list.setItems(null);
                     list.setItems(FXCollections.observableList(UserManagement.getUsers()));
+                    list.getSelectionModel().select(u);
                 });
             });
         } catch (IOException e) {
@@ -111,12 +109,29 @@ public class MainController {
             }
         });
 
-        list.setOnMouseClicked((MouseEvent event) ->{
-            if(event.getClickCount()==2 && (list.getSelectionModel().getSelectedItems()!=null))
-
-                System.out.println(list.getSelectionModel().getSelectedItem());
-
+        list.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if (newValue != null)
+            {
+                Service s = Server.map.get(newValue.getUsername());
+                if (s != null)
+                {
+                    userIP.setText("User IP: " + s.getConnectedIPAddress());
+                    userPort.setText("User port: " + s.getConnectedPort());
+                }
+                else
+                {
+                    userIP.setText("User IP: ---");
+                    userPort.setText("User port: ---");
+                }
+            }
+            else
+            {
+                userIP.setText("User IP: ---");
+                userPort.setText("User port: ---");
+            }
         });
+
     }
 
 
