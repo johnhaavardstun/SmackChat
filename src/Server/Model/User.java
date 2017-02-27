@@ -4,8 +4,9 @@ import com.sun.org.apache.bcel.internal.generic.RETURN;
 import javafx.beans.value.ObservableValue;
 
 /**
- * Class that creates a user which can log in SmackChat.
+ * Class that creates a user which can log in to SmackChat.
  *
+
  */
 public class User
 {
@@ -29,7 +30,7 @@ public class User
 
     /**
      * This constructs a user with a specified name and password.
-     * The status is set to offline.
+     * The status is set to offline by default.
      *
      * @param name the name of the user
      * @param password the password of the user

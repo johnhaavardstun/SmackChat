@@ -2,13 +2,14 @@ package Client.Model;
 
 
 /**
- * This class sets the status of a user.
+ * This class constructs an object which stores the username and status of a user. This is a helper class to display different
+ * users with statuses.
  *
  */
 public class UserStatus
 {
     /**
-     * The status of a user can either be online busy or offline.
+     * The status of a user can either be online, busy or offline.
      */
     public enum Status {
         ONLINE,

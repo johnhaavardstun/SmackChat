@@ -47,17 +47,14 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
             try {
 
-                System.out.println("Lager Task");
 
                 oot = new ObjectOutputStream(socket.getOutputStream());
                 oot.flush();
                 oon = new ObjectInputStream(socket.getInputStream());
 
-                System.out.println("Starter Task loop");
 
                 while (true) {
 
-                    System.out.println("leser objekt/packet");
 
                     if((packet=(Packet)oon.readObject())!=null)
                     {
@@ -65,13 +62,11 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                         handleData(packet);
                     }
 
-                    System.out.println("Har lest objekt/packet");
 
                 }
 
             } catch (IOException e) {
                 System.out.println("Connection lost - bye!");
-                //e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -85,7 +80,6 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
         task.stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == State.CANCELLED || newValue == State.FAILED || newValue == State.SUCCEEDED)
             {
-                // klienten har disconnected?
                 if (user != null) {
                     UserManagement.setUserStatus(user, User.Status.OFFLINE);
                     Server.map.remove(user.getUsername());
@@ -107,11 +101,9 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
      * correct result back to the client.</p>
      *
      * @param packet the packet this method receives from the client
-     * @throws IOException throws NullPointerException
+     * @throws IOException if an errors occurs during the input or output.
      */
     public void handleData(Packet packet) throws IOException {
-
-        System.out.println(packet.getPacketId());
         String data=packet.getMessage();
         String brukernavn="";
         switch (packet.getPacketId()){
@@ -133,12 +125,10 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                     UserManagement.setUserStatus(user, User.Status.ONLINE);
                         Server.map.put(info[0],this);
                     sendData(new Packet(Packet.PacketId.LOGIN_OK, brukernavn));
-                    System.out.println("Log in: OK");
                 }
                 else
                 {
                     sendData( new Packet(Packet.PacketId.WRONG_LOGIN,"Pakke Mottatt"));
-                    System.out.println("Auth fail - possible break-in attemp?!?!?!?!?!?!11");
                     System.out.println(info[0] + ":" + info[1]);
                 }
 
@@ -150,12 +140,11 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
                     if(UserManagement.userExistTest(info[0]))
                     {
                         UserManagement.addUserToFile(info[0],info[1]);
-                        System.out.println("Bruker er registret");
                         sendData(new Packet(Packet.PacketId.REGISTER_OK, "Welcome!"));
                     }
                     else
                     {
-                        sendData(new Packet(Packet.PacketId.USERNAME_TAKEN, "Have some originality"));
+                        sendData(new Packet(Packet.PacketId.USERNAME_TAKEN, "username taken"));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -165,13 +154,11 @@ public class Service<V> extends javafx.concurrent.Service<Void> {
 
             case USER_LIST_REQUEST:
                 String users = UserManagement.getUserStatusList();
-                //System.out.println(users);
                 sendData(new Packet(Packet.PacketId.USER_LIST, users));
                 System.out.println(Thread.currentThread().getName() + " >>> " + user);
                 break;
 
             case CHAT_CONNECTION_REQUEST_SERVER:
-                System.out.println("Conn req: " + data + " ønsker å chatte med " + "..."+data );
                 System.out.println(Thread.currentThread().getName() + " >>> " + user);
                 Server.map.get(data).sendData(new Packet(Packet.PacketId.CHAT_CONNECTION_REQUEST_CLIENT, user.getUsername()));
             break;

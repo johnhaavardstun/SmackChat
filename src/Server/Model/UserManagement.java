@@ -155,15 +155,9 @@ public class UserManagement
      */
     public static String getUserStatusList() {
         StringBuffer sb = new StringBuffer();
-//int i = 0;
         for (User u: userList)
         {
-//            switch (i % 3)
-//            {
-//                case 0: u.setStatus(User.Status.ONLINE); break;
-//                case 1: u.setStatus(User.Status.BUSY); break;
-//                case 2: u.setStatus(User.Status.OFFLINE); break;
-//            }i++;
+
             switch (u.getStatus())
             {
                 case ONLINE:  sb.append(1); break;
@@ -222,7 +216,7 @@ public class UserManagement
      * given by the status you set in the status parameter.</p>
      *
      * @param username name of the user
-     * @param status that changes the user to
+     * @param status the status of the user to be changed to.
      */
     public static void setUserStatus(String username, User.Status status)
     {
@@ -236,10 +230,10 @@ public class UserManagement
         }
     }
 
-    /** //??? SAMME METODE SOM OVENFOR??
+    /**
      *
-     * @param user
-     * @param status
+     * @param user the user object, @{@link User}
+     * @param status the status of the user to be changed to.
      */
     public static void setUserStatus(User user,  User.Status status) {
         if (user == null) throw new NullPointerException("User can not be null!");

@@ -1,6 +1,6 @@
 Eple:123
-Erik:Jew
-Ali:321
-Shamil:123
-Aizan:123
-Fatima:123
+Orange:Jungle
+Banana:321
+Batman:123
+superman:123
+vult:123

@@ -9,7 +9,7 @@ import java.net.UnknownHostException;
 
 /**
  * This class establishes a peer-to-peer connection between two clients. If connection is established, this class
- * manages the chat session between the two clients. Once the two clients are connected to each other, a new thread
+ * manages the chat session between the two clients. Once the two clients are connected to each other:a  new thread
  * will start to listen for messages from the other client through packets.
  */
 public class ChatSession extends Task<Void> {
@@ -26,7 +26,7 @@ public class ChatSession extends Task<Void> {
     //To contact
     /**
      * This constructs a chat session between two clients where ip and port is specified.
-     * It constructs a new socket and this socket is the socket where the two clients can
+     * It constructs a new socket and this socket is the socket where the  client can
      * send and receive data from each other.
      *
      * @param ip the ip of the client you want to chat with
@@ -49,8 +49,8 @@ public class ChatSession extends Task<Void> {
 
     //to make yourself connectable
     /**
-     * This constructs the server socket for this client (yourself). This will enable the author client
-     * to establish a connection with yourself.
+     * This constructs the server socket for this client (yourself). This will enable an another client
+     * to connect and create a chat-session.
      */
     public ChatSession() {
 
@@ -62,17 +62,16 @@ public class ChatSession extends Task<Void> {
 
     }
 
+
     @Override
     protected Void call() throws Exception {
         if (sc == null)
             sc = ssc.accept();
 
-        System.out.println("Doing stuff");
         oos = new ObjectOutputStream(sc.getOutputStream());
         ois = new ObjectInputStream((sc.getInputStream()));
         ChatListener chatListener = new ChatListener(this);
         chatListener.start();
-        System.out.println("Done!");
 
         return null;
 
@@ -114,7 +113,6 @@ public class ChatSession extends Task<Void> {
      */
     public String getServerIP() {
         String s = null;
-//        s = ssc.getInetAddress().getHostAddress();
         try {
             s = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
@@ -124,7 +122,7 @@ public class ChatSession extends Task<Void> {
     }
 
     /**
-     * This method gets the server port number from this client
+     * This method gets the  port number from this client
      *
      * @return the server port from this client
      */
